@@ -3,6 +3,7 @@ package controller
 import (
 	"LibraryManagement/config"
 	"LibraryManagement/dto"
+	"LibraryManagement/result"
 	"LibraryManagement/service"
 	"fmt"
 
@@ -24,8 +25,13 @@ func AddBookController(c *gin.Context) {
 func DeleteBookController(c *gin.Context) {
 	var ids = make([]string, 0)
 	ids = c.QueryArray("ids")
-
 	fmt.Println("收到请求---Delete: ", ids)
+
+	if len(ids) == 0 {
+		result.Failed(c, result.RequiredCode, result.GetMessage(result.RequiredCode))
+		return
+	}
+
 	service.NewBookService(c, config.DB).Delete(ids)
 }
 

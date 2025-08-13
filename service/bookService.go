@@ -29,6 +29,7 @@ func (b *bookServiceImpl) Add(dto *dto.BookInfoDTO) {
 		result.Failed(b.Ctx, result.RequiredCode, result.GetMessage(result.RequiredCode))
 		return
 	}
+	// TODO ISBN校验
 
 	err = dao.BookAddDAO(b.Db, dto)
 	if err != nil {

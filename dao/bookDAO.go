@@ -37,16 +37,18 @@ func BookUpdateDAO(db *gorm.DB, dto *dto.BookUpdateDTO) error {
 		return err
 	}
 
-	// 检查并更新版本号
-	book.Version = book.Version + 1
-	book.ISBN = dto.ISBN
-	book.Title = dto.Title
-	book.Count = dto.Count
+	// 准备更新字段
+	updates := map[string]interface{}{
+		"title":   dto.Title,
+		"count":   dto.Count,
+		"isbn":    dto.ISBN,
+		"version": book.Version + 1,
+	}
 
 	// 使用乐观锁更新
 	result := db.Model(&entity.Book{}).
 		Where("id = ? AND version = ?", dto.ID, book.Version).
-		Updates(book)
+		Updates(updates)
 
 	if result.Error != nil {
 		return result.Error
