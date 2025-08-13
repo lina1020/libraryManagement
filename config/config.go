@@ -1,20 +1,22 @@
 package config
 
 import (
-	"gopkg.in/yaml.v3"
+	"fmt"
 	"os"
+
+	"gopkg.in/yaml.v3"
 )
 
 type config struct {
 	Server server `yaml:"server"`
-	Mysql  mysql  `yaml:"mysql"`
+	Db     db     `yaml:"db"`
 }
 
 type server struct {
-	Host string `yaml:"host"`
+	Port string `yaml:"port"`
 }
 
-type mysql struct {
+type db struct {
 	User     string `yaml:"user"`
 	Password string `yaml:"password"`
 	Host     string `yaml:"host"`
@@ -24,14 +26,15 @@ type mysql struct {
 
 var Config *config
 
-func init() {
-	yamlFile, err := os.ReadFile("./config.yaml")
+func LoadConfig(path string) error {
+	data, err := os.ReadFile(path)
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("无法读取配置文件: %w", err)
 	}
 
-	err = yaml.Unmarshal(yamlFile, &Config)
-	if err != nil {
-		panic(err)
+	if err := yaml.Unmarshal(data, &Config); err != nil {
+		return fmt.Errorf("无法解析配置文件: %w", err)
 	}
+
+	return nil
 }
