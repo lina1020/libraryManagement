@@ -2,10 +2,15 @@ package main
 
 import (
 	"LibraryManagement/config"
-	"fmt"
+	"LibraryManagement/router"
+	"context"
+	"errors"
 	"log"
-
-	"github.com/gin-gonic/gin"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
 // 初始化配置，连接数据库
@@ -16,22 +21,42 @@ func init() {
 
 	err := config.SetupDBLink()
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 }
 
+// Gin 框架 Web 服务的优雅关闭（Graceful Shutdown）实现
 func main() {
-	engine := gin.Default()
-	engine.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
+	gin := router.InitRouter()
 
-	err := engine.Run()
-	if err != nil {
-		fmt.Println(err)
-		return
+	//创建HTTP服务器
+	server := &http.Server{
+		Addr:    config.Config.Server.Port,
+		Handler: gin,
 	}
+
+	//启动HTTP服务器
+	go func() {
+		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	//等待退出信号
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	log.Println("Shutdown Server ...")
+
+	//创建超时上下文，Shutdown可以让未处理的连接在这个时间内关闭
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	//停止HTTP服务器
+	if err := server.Shutdown(ctx); err != nil {
+		log.Fatal("Server Shutdown:", err)
+	}
+	log.Println("Server exiting")
+
 }

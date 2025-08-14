@@ -17,6 +17,8 @@ import (
 	"gorm.io/gorm"
 )
 
+// TODO 好像写成了集成测试，同时测试Controller 层和Service 层
+
 /*
 Controller 层测试
 
@@ -48,7 +50,7 @@ func setupTestDB() *gorm.DB {
 }
 
 // 设置测试环境
-func setupTestRouter() *gin.Engine {
+func SetupTestRouter() *gin.Engine {
 	// 1. 初始化测试数据库
 	config.DB = setupTestDB()
 
@@ -61,11 +63,13 @@ func setupTestRouter() *gin.Engine {
 	r.PUT("/books/update", UpdateBookController)
 	r.POST("/books/list", BookListController)
 
+	r.POST("/auth/login", LoginController)
+	r.POST("/auth/register", RegisterController)
 	return r
 }
 
 func TestAddBookController(t *testing.T) {
-	router := setupTestRouter()
+	router := SetupTestRouter()
 
 	tests := []struct {
 		name             string
@@ -129,7 +133,7 @@ func TestAddBookController(t *testing.T) {
 }
 
 func TestDeleteBookController(t *testing.T) {
-	router := setupTestRouter()
+	router := SetupTestRouter()
 
 	tests := []struct {
 		name             string
