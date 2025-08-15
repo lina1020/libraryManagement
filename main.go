@@ -13,21 +13,19 @@ import (
 	"time"
 )
 
-// 初始化配置，连接数据库
-func init() {
+// Gin 框架 Web 服务的优雅关闭（Graceful Shutdown）实现
+func main() {
+
+	// 初始化配置，连接数据库
 	if err := config.LoadConfig("./config.yaml"); err != nil {
 		log.Fatal(err)
 	}
 
 	err := config.SetupDBLink()
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
-}
-
-// Gin 框架 Web 服务的优雅关闭（Graceful Shutdown）实现
-func main() {
 	gin := router.InitRouter()
 
 	//创建HTTP服务器
