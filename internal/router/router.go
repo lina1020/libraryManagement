@@ -30,7 +30,13 @@ func register(router *gin.Engine, bookHandler *handler.BookHandler, userHandler 
 	api.Use(middleware.AuthMiddleware("")) // 所有登录用户可访问
 	{
 		api.GET("/books/list", bookHandler.BookList)
-		// TODO 借阅归还等
+
+		api.GET("/books/:id", bookHandler.GetBook) // 获取单本书籍详情
+
+		// ES搜索功能
+		api.POST("/books/search", bookHandler.SearchBooks)            // 综合搜索
+		api.GET("/books/search/title", bookHandler.SearchByTitle)     // 标题搜索
+		api.GET("/books/search/content", bookHandler.SearchByContent) // 内容搜索
 	}
 
 	// 管理员专用路由
@@ -38,8 +44,13 @@ func register(router *gin.Engine, bookHandler *handler.BookHandler, userHandler 
 	admin.Use(middleware.AuthMiddleware("admin")) // 仅管理员
 	{
 		admin.POST("/books/add", bookHandler.AddBook)
-		admin.PUT("/books/update", bookHandler.DeleteBook)
-		admin.DELETE("/books/delete", bookHandler.UpdateBook)
+		admin.PUT("/books/update", bookHandler.UpdateBook)
+		admin.DELETE("/books/delete", bookHandler.DeleteBook)
+
+		// ES索引管理
+		admin.POST("/es/index/init", bookHandler.InitESIndex)     // 初始化ES索引
+		admin.POST("/es/index/reindex", bookHandler.ReindexBooks) // 重新索引所有数据
+
 	}
 
 }

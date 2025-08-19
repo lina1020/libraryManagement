@@ -1,0 +1,105 @@
+# API使用示例
+
+# 1. 用户注册
+curl -X POST http://localhost:8080/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "admin",
+    "password": "123456",
+    "role": "admin"
+  }'
+
+# 2. 用户登录
+curl -X POST http://localhost:8080/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "admin",
+    "password": "123456"
+  }'
+
+# 假设获得的token为: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+# 3. 添加书籍（包含内容）
+curl -X POST http://localhost:8080/admin/books/add \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{
+    "title": "Go语言编程",
+    "author": "张三",
+    "isbn": "9787111547426",
+    "count": 10,
+    "summary": "这是一本关于Go语言编程的入门书籍，适合初学者学习。",
+    "content": "第一章：Go语言简介\nGo语言是Google开发的一种静态强类型、编译型语言。Go语言的语法接近C语言，但对于变量的声明有所不同。Go语言支持垃圾回收功能。\n\n第二章：基本语法\n变量声明使用var关键字，函数声明使用func关键字。Go语言支持多返回值函数。\n\n第三章：并发编程\nGo语言通过goroutine实现并发，通过channel实现通信。"
+  }'
+
+# 4. 初始化ES索引
+curl -X POST http://localhost:8080/admin/es/index/init \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# 5. 重新索引所有书籍到ES
+curl -X POST http://localhost:8080/admin/es/index/reindex \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# 6. 获取书籍详情
+curl -X GET http://localhost:8080/api/books/1 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# 7. 数据库查询书籍列表
+curl -X GET "http://localhost:8080/api/books/list?title=Go&page=1&page_size=10" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# 8. ES综合搜索（全文搜索）
+curl -X GET "http://localhost:8080/api/books/search?keyword=Go语言编程&page=1&page_size=10" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# 或使用POST方式
+curl -X POST http://localhost:8080/api/books/search \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{
+    "keyword": "Go语言编程",
+    "page": 1,
+    "page_size": 10
+  }'
+
+# 9. 精确标题搜索
+curl -X GET "http://localhost:8080/api/books/search/title?title=Go语言编程&exact=true" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# 10. 模糊标题搜索
+curl -X GET "http://localhost:8080/api/books/search/title?title=Go语言&exact=false" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# 11. 内容模糊搜索
+curl -X GET "http://localhost:8080/api/books/search/content?content=并发编程" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# 12. 复合条件搜索
+curl -X POST http://localhost:8080/api/books/search \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{
+    "title": "Go",
+    "author": "张三",
+    "content": "goroutine",
+    "page": 1,
+    "page_size": 5
+  }'
+
+# 13. 更新书籍
+curl -X PUT http://localhost:8080/admin/books/update \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{
+    "id": 1,
+    "title": "Go语言编程（第二版）",
+    "author": "张三",
+    "isbn": "9787111547426",
+    "count": 15,
+    "summary": "这是一本关于Go语言编程的进阶书籍，适合有一定基础的开发者学习。",
+    "content": "第一章：Go语言简介\nGo语言是Google开发的一种静态强类型、编译型语言...\n\n第二章：高级特性\n接口、反射、内存管理等高级特性的详细讲解..."
+  }'
+
+# 14. 删除书籍
+curl -X DELETE "http://localhost:8080/admin/books/delete?ids=1&ids=2" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"

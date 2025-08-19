@@ -1,7 +1,7 @@
 package main
 
 import (
-	config2 "LibraryManagement/internal/config"
+	"LibraryManagement/internal/config"
 	"LibraryManagement/internal/es"
 	"LibraryManagement/internal/handler"
 	"LibraryManagement/internal/repo/dao"
@@ -21,24 +21,36 @@ import (
 func main() {
 
 	// 初始化配置，连接数据库
-	if err := config2.LoadConfig("./config.yaml"); err != nil {
-		log.Fatal(err)
+	if err := config.LoadConfig("./config.yaml"); err != nil {
+		log.Fatal("加载配置文件失败: ", err)
 	}
 
-	err := dao.SetupDBLink()
-	if err != nil {
-		log.Fatal(err)
+	// 初始化数据库连接
+	if err := dao.SetupDBLink(); err != nil {
+		log.Fatal("数据库连接失败: ", err)
 	}
 
 	// ES初始化
 	if err := es.InitES(); err != nil {
-		log.Fatal("ES 初始化失败: ", err)
+		log.Printf("ES 初始化失败: %v", err)
+		log.Println("将在没有ES支持的情况下继续运行")
+	} else {
+		log.Println("ES 初始化成功")
 	}
 
 	// 依赖注入
 	// init service
 	bookService := service.NewBookService()
 	userService := service.NewUserService()
+
+	// 初始化ES索引（如果ES可用）
+	if es.Client != nil {
+		if err := bookService.InitializeESIndex(); err != nil {
+			log.Printf("ES索引初始化失败: %v", err)
+		} else {
+			log.Println("ES索引初始化成功")
+		}
+	}
 
 	// init handler
 	bookHandler := handler.NewBookHandler(bookService)
@@ -48,7 +60,7 @@ func main() {
 
 	//创建HTTP服务器
 	server := &http.Server{
-		Addr:    config2.Config.Server.Port,
+		Addr:    config.Config.Server.Port,
 		Handler: gin,
 	}
 

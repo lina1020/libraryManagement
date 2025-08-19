@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"LibraryManagement/utils"
+	"LibraryManagement/internal/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
