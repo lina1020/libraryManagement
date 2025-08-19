@@ -195,7 +195,7 @@ import (
 
 // AddBookController 添加书籍
 func AddBookController(c *gin.Context) <span class="cov8" title="1">{
-        bookInfoDTO := &amp;dto.BookInfoDTO{}
+        bookInfoDTO := &amp;dto.BookInfoReq{}
         err := c.BindJSON(bookInfoDTO)
         if err != nil </span><span class="cov0" title="0">{
                 return
@@ -220,7 +220,7 @@ func DeleteBookController(c *gin.Context) <span class="cov8" title="1">{
 
 // UpdateBookController 更新书籍
 func UpdateBookController(c *gin.Context) <span class="cov0" title="0">{
-        bookUpdateDTO := &amp;dto.BookUpdateDTO{}
+        bookUpdateDTO := &amp;dto.BookUpdateReq{}
         err := c.BindJSON(bookUpdateDTO)
         if err != nil </span><span class="cov0" title="0">{
                 return
@@ -231,7 +231,7 @@ func UpdateBookController(c *gin.Context) <span class="cov0" title="0">{
 
 // BookListController 批量查询
 func BookListController(c *gin.Context) <span class="cov0" title="0">{
-        bookSearchDTO := &amp;dto.BookSearchDTO{}
+        bookSearchDTO := &amp;dto.BookSearchReq{}
         err := c.BindJSON(bookSearchDTO)
         if err != nil </span><span class="cov0" title="0">{
                 return
@@ -255,7 +255,7 @@ import (
 
 // LoginController 登入
 func LoginController(c *gin.Context) <span class="cov8" title="1">{
-        loginDTO := &amp;dto.LoginDTO{}
+        loginDTO := &amp;dto.LoginReq{}
         err := c.BindJSON(loginDTO)
         if err != nil </span><span class="cov8" title="1">{
                 result.Failed(c, result.FailedCode, "请求数据格式错误")
@@ -268,7 +268,7 @@ func LoginController(c *gin.Context) <span class="cov8" title="1">{
 
 // RegisterController 注册
 func RegisterController(c *gin.Context) <span class="cov8" title="1">{
-        registerDTO := &amp;dto.RegisterDTO{}
+        registerDTO := &amp;dto.RegisterReq{}
         err := c.BindJSON(registerDTO)
         if err != nil </span><span class="cov8" title="1">{
                 result.Failed(c, result.FailedCode, "请求数据格式错误")
@@ -291,7 +291,7 @@ import (
         "gorm.io/gorm"
 )
 
-func BookAddDAO(db *gorm.DB, dto *dto.BookInfoDTO) error <span class="cov8" title="1">{
+func BookAddDAO(db *gorm.DB, dto *dto.BookInfoReq) error <span class="cov8" title="1">{
         book := &amp;entity.Book{
                 Title: dto.Title,
                 Count: dto.Count,
@@ -311,7 +311,7 @@ func BookDeleteDAO(db *gorm.DB, idStr []string) error <span class="cov8" title="
 }
 
 // 数据库乐观锁更新
-func BookUpdateDAO(db *gorm.DB, dto *dto.BookUpdateDTO) error <span class="cov8" title="1">{
+func BookUpdateDAO(db *gorm.DB, dto *dto.BookUpdateReq) error <span class="cov8" title="1">{
         var book entity.Book
         err := db.Where("id = ?", dto.ID).First(&amp;book).Error
         if err != nil </span><span class="cov8" title="1">{
@@ -342,7 +342,7 @@ func BookUpdateDAO(db *gorm.DB, dto *dto.BookUpdateDTO) error <span class="cov8"
 }
 
 // TODO 考虑分页
-func BookListDAO(db *gorm.DB, dto *dto.BookSearchDTO) (*[]vo.BookInfoVO, error) <span class="cov8" title="1">{
+func BookListDAO(db *gorm.DB, dto *dto.BookSearchReq) (*[]vo.BookInfoResp, error) <span class="cov8" title="1">{
         dbSql := db.Model(&amp;entity.Book{})
         if dto.Title != "" </span><span class="cov8" title="1">{
                 dbSql = dbSql.Where("title LIKE ?", "%"+dto.Title+"%")
@@ -350,7 +350,7 @@ func BookListDAO(db *gorm.DB, dto *dto.BookSearchDTO) (*[]vo.BookInfoVO, error) 
         <span class="cov8" title="1">if dto.ISBN != "" </span><span class="cov8" title="1">{
                 dbSql = dbSql.Where("isbn = ?", dto.ISBN)
         }</span>
-        <span class="cov8" title="1">var books []vo.BookInfoVO
+        <span class="cov8" title="1">var books []vo.BookInfoResp
         dbSql.Find(&amp;books)
         return &amp;books, dbSql.Error</span>
 }
@@ -368,7 +368,7 @@ import (
 )
 
 type UserDAO interface {
-        CreateUserDAO(db *gorm.DB, user *dto.RegisterDTO) error
+        CreateUserDAO(db *gorm.DB, user *dto.RegisterReq) error
         GetUserByUsernameDAO(db *gorm.DB, username string) (*entity.User, error)
         GetUserByIdDAO(db *gorm.DB, id uint) (*entity.User, error)
 }
@@ -379,7 +379,7 @@ type userDAOImpl struct{}
 var UserDao UserDAO = &amp;userDAOImpl{}
 
 // CreateUserDAO 创建用户（自动哈希密码）
-func (d *userDAOImpl) CreateUserDAO(db *gorm.DB, user *dto.RegisterDTO) error <span class="cov0" title="0">{
+func (d *userDAOImpl) CreateUserDAO(db *gorm.DB, user *dto.RegisterReq) error <span class="cov0" title="0">{
         hashed, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
         if err != nil </span><span class="cov0" title="0">{
                 return err
@@ -652,10 +652,10 @@ import (
 )
 
 type BookService interface {
-        Add(dto *dto.BookInfoDTO)
+        Add(dto *dto.BookInfoReq)
         Delete(ids []string)
-        Update(dto *dto.BookUpdateDTO)
-        List(dto *dto.BookSearchDTO)
+        Update(dto *dto.BookUpdateReq)
+        List(dto *dto.BookSearchReq)
 }
 
 type bookServiceImpl struct {
@@ -663,7 +663,7 @@ type bookServiceImpl struct {
         Db  *gorm.DB
 }
 
-func (b *bookServiceImpl) Add(dto *dto.BookInfoDTO) <span class="cov0" title="0">{
+func (b *bookServiceImpl) Add(dto *dto.BookInfoReq) <span class="cov0" title="0">{
         // 验证器会根据结构体里写的 validate 标签，自动检查字段是否符合规则
         err := validator.New().Struct(dto)
         if err != nil </span><span class="cov0" title="0">{
@@ -694,7 +694,7 @@ func (b *bookServiceImpl) Delete(ids []string) <span class="cov0" title="0">{
 }
 
 // 数据库乐观锁更新
-func (b *bookServiceImpl) Update(dto *dto.BookUpdateDTO) <span class="cov0" title="0">{
+func (b *bookServiceImpl) Update(dto *dto.BookUpdateReq) <span class="cov0" title="0">{
         // 验证器会根据结构体里写的 validate 标签，自动检查字段是否符合规则
         err := validator.New().Struct(dto)
         if err != nil </span><span class="cov0" title="0">{
@@ -711,7 +711,7 @@ func (b *bookServiceImpl) Update(dto *dto.BookUpdateDTO) <span class="cov0" titl
         <span class="cov0" title="0">result.Success(b.Ctx, "书籍更新成功")</span>
 }
 
-func (b *bookServiceImpl) List(dto *dto.BookSearchDTO) <span class="cov0" title="0">{
+func (b *bookServiceImpl) List(dto *dto.BookSearchReq) <span class="cov0" title="0">{
         // 验证器会根据结构体里写的 validate 标签，自动检查字段是否符合规则
         err := validator.New().Struct(dto)
         if err != nil </span><span class="cov0" title="0">{
@@ -754,8 +754,8 @@ import (
 )
 
 type UserService interface {
-        CreateUser(user *dto.RegisterDTO)
-        Login(dto *dto.LoginDTO)
+        CreateUser(user *dto.RegisterReq)
+        Login(dto *dto.LoginReq)
 }
 
 type userServiceImpl struct {
@@ -764,7 +764,7 @@ type userServiceImpl struct {
         Dao dao.UserDAO // 依赖注入
 }
 
-func (u userServiceImpl) CreateUser(user *dto.RegisterDTO) <span class="cov8" title="1">{
+func (u userServiceImpl) CreateUser(user *dto.RegisterReq) <span class="cov8" title="1">{
         if user.Role == "" </span><span class="cov0" title="0">{
                 user.Role = "user"
         }</span>
@@ -799,7 +799,7 @@ func (u userServiceImpl) CreateUser(user *dto.RegisterDTO) <span class="cov8" ti
         <span class="cov8" title="1">result.Success(u.Ctx, user.Role+"创建成功")</span>
 }
 
-func (u userServiceImpl) Login(dto *dto.LoginDTO) <span class="cov8" title="1">{
+func (u userServiceImpl) Login(dto *dto.LoginReq) <span class="cov8" title="1">{
         user, err := u.Dao.GetUserByUsernameDAO(u.Db, dto.Username)
         if err != nil </span><span class="cov8" title="1">{
                 result.Failed(u.Ctx, result.FailedCode, "用户名或密码错误")
@@ -819,7 +819,7 @@ func (u userServiceImpl) Login(dto *dto.LoginDTO) <span class="cov8" title="1">{
                 return
         }</span>
 
-        <span class="cov8" title="1">result.Success(u.Ctx, &amp;vo.LoginVO{
+        <span class="cov8" title="1">result.Success(u.Ctx, &amp;vo.LoginResp{
                 Token:  token,
                 UserID: user.ID,
                 Role:   user.Role,

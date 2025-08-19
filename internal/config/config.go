@@ -8,8 +8,9 @@ import (
 )
 
 type config struct {
-	Server server `yaml:"server"`
-	Db     db     `yaml:"db"`
+	Server        server              `yaml:"server"`
+	Db            db                  `yaml:"db"`
+	Elasticsearch elasticsearchConfig `yaml:"elasticsearch"`
 }
 
 type server struct {
@@ -22,6 +23,14 @@ type db struct {
 	Host     string `yaml:"host"`
 	Port     string `yaml:"port"`
 	Db       string `yaml:"db"`
+}
+
+// elasticsearchConfig ES配置
+type elasticsearchConfig struct {
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
 }
 
 var Config *config

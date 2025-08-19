@@ -1,8 +1,12 @@
 package main
 
 import (
-	"LibraryManagement/config"
-	"LibraryManagement/router"
+	config2 "LibraryManagement/internal/config"
+	"LibraryManagement/internal/es"
+	"LibraryManagement/internal/handler"
+	"LibraryManagement/internal/repo/dao"
+	"LibraryManagement/internal/router"
+	"LibraryManagement/internal/service"
 	"context"
 	"errors"
 	"log"
@@ -17,20 +21,34 @@ import (
 func main() {
 
 	// 初始化配置，连接数据库
-	if err := config.LoadConfig("./config.yaml"); err != nil {
+	if err := config2.LoadConfig("./config.yaml"); err != nil {
 		log.Fatal(err)
 	}
 
-	err := config.SetupDBLink()
+	err := dao.SetupDBLink()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	gin := router.InitRouter()
+	// ES初始化
+	if err := es.InitES(); err != nil {
+		log.Fatal("ES 初始化失败: ", err)
+	}
+
+	// 依赖注入
+	// init service
+	bookService := service.NewBookService()
+	userService := service.NewUserService()
+
+	// init handler
+	bookHandler := handler.NewBookHandler(bookService)
+	userHandler := handler.NewUserHandler(userService)
+
+	gin := router.InitRouter(bookHandler, userHandler)
 
 	//创建HTTP服务器
 	server := &http.Server{
-		Addr:    config.Config.Server.Port,
+		Addr:    config2.Config.Server.Port,
 		Handler: gin,
 	}
 

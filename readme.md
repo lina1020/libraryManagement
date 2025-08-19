@@ -44,7 +44,7 @@
   ```
 - **结构体**：
   ```go
-  type BookInfoDTO struct {
+  type BookInfoReq struct {
       Title string `json:"title" validate:"required"`
       Count uint   `json:"count" validate:"required"`
       ISBN  string `json:"isbn" validate:"required"`
