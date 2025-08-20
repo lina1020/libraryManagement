@@ -17,45 +17,96 @@ curl -X POST http://localhost:8080/auth/login \
     "password": "123456"
   }'
 
+{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo",
+"user_id":1,
+"role":"admin"}}
 # 假设获得的token为: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 # 3. 添加书籍（包含内容）
 curl -X POST http://localhost:8080/admin/books/add \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
   -d '{
     "title": "Go语言编程",
     "author": "张三",
-    "isbn": "9787111547426",
+    "isbn": "9787111547427",
     "count": 10,
     "summary": "这是一本关于Go语言编程的入门书籍，适合初学者学习。",
     "content": "第一章：Go语言简介\nGo语言是Google开发的一种静态强类型、编译型语言。Go语言的语法接近C语言，但对于变量的声明有所不同。Go语言支持垃圾回收功能。\n\n第二章：基本语法\n变量声明使用var关键字，函数声明使用func关键字。Go语言支持多返回值函数。\n\n第三章：并发编程\nGo语言通过goroutine实现并发，通过channel实现通信。"
   }'
 
+curl -X POST http://localhost:8080/admin/books/add \
+-H "Content-Type: application/json" \
+-H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
+-d '{
+  "title": "深入理解计算机系统",
+  "author": "Randal E. Bryant",
+  "isbn": "9787111317099",
+  "count": 5,
+  "summary": "本书从程序员的视角详细阐述计算机系统的本质概念，并展示这些概念如何实实在在地影响应用程序的正确性、性能和规模。适合计算机专业学生和开发人员。",
+  "content": "第1章：计算机系统漫游\n介绍了从C语言程序到执行的全过程，包括编译、链接、加载和运行。\n\n第2章：信息的表示和处理\n讲解了整数、浮点数在计算机中的表示方式，以及位运算和字节顺序。\n\n第3章：程序的机器级表示\n以x86-64为例，分析编译后的汇编代码，理解函数调用、栈结构等底层机制。"
+}'
+
+curl -X POST http://localhost:8080/admin/books/add \
+-H "Content-Type: application/json" \
+-H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
+-d '{
+"title": "算法导论",
+"author": "Thomas H. Cormen",
+"isbn": "9787111407010",
+"count": 3,
+"summary": "全球众多院校广泛使用的算法教材，内容全面，涵盖排序、图算法、动态规划、贪心算法等，理论与实践结合。",
+"content": "第4章：分治法\n介绍了递归思想与主定理（Master Theorem），并以归并排序为例说明分治策略。\n\n第15章：动态规划\n讲解了最优子结构与重叠子问题，通过钢条切割、最长公共子序列等实例深入剖析。\n\n第22章：基本的图算法\n包括广度优先搜索（BFS）、深度优先搜索（DFS）及其应用。"
+}'
+
+curl -X POST http://localhost:8080/admin/books/add \
+-H "Content-Type: application/json" \
+-H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
+-d '{
+  "title": "重构：改善既有代码的设计",
+  "author": "Martin Fowler",
+  "isbn": "9787111605200",
+  "count": 4,
+  "summary": "介绍如何在不改变外部行为的前提下，改善代码的内部结构。书中列举了数十种重构手法，是提升代码质量的必读书籍。",
+  "content": "第2章：重构示例\n通过一个完整的电影租赁系统重构过程，展示如何一步步改进代码。\n\n第6章：重新组织函数\n包括提取函数（Extract Function）、内联函数、引入参数对象等常见技巧。\n\n第8章：搬移特性\n讲解如何将字段或方法从一个类移到另一个类，以优化职责分配。"
+}'
+
 # 4. 初始化ES索引
 curl -X POST http://localhost:8080/admin/es/index/init \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
 
 # 5. 重新索引所有书籍到ES
 curl -X POST http://localhost:8080/admin/es/index/reindex \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
 
 # 6. 获取书籍详情
 curl -X GET http://localhost:8080/api/books/1 \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
 
 # 7. 数据库查询书籍列表
-curl -X GET "http://localhost:8080/api/books/list?title=Go&page=1&page_size=10" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+curl -X POST http://localhost:8080/api/books/list \
+  -H "Content-Type: application/json" \
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
+  -d '{
+    "title": "Go",
+    "page": 1,
+    "page_size": 10
+  }'
+
+curl -X POST http://localhost:8080/api/books/list \
+  -H "Content-Type: application/json" \
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
+  -d '{
+    "title": "",
+    "page": 1,
+    "page_size": 10
+  }'
 
 # 8. ES综合搜索（全文搜索）
-curl -X GET "http://localhost:8080/api/books/search?keyword=Go语言编程&page=1&page_size=10" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
-
 # 或使用POST方式
 curl -X POST http://localhost:8080/api/books/search \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
   -d '{
     "keyword": "Go语言编程",
     "page": 1,
@@ -64,15 +115,15 @@ curl -X POST http://localhost:8080/api/books/search \
 
 # 9. 精确标题搜索
 curl -X GET "http://localhost:8080/api/books/search/title?title=Go语言编程&exact=true" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
 
-# 10. 模糊标题搜索
-curl -X GET "http://localhost:8080/api/books/search/title?title=Go语言&exact=false" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+# 10. 模糊标题搜索 TODO 搜索不到
+curl -X GET "http://localhost:8080/api/books/search/title?title=算&exact=false" \
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
 
 # 11. 内容模糊搜索
-curl -X GET "http://localhost:8080/api/books/search/content?content=并发编程" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+curl -X GET "http://localhost:8080/api/books/search/content?content=语言" \
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
 
 # 12. 复合条件搜索
 curl -X POST http://localhost:8080/api/books/search \
@@ -89,10 +140,10 @@ curl -X POST http://localhost:8080/api/books/search \
 # 13. 更新书籍
 curl -X PUT http://localhost:8080/admin/books/update \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
   -d '{
     "id": 1,
-    "title": "Go语言编程（第二版）",
+    "title": "Go语言编程（第三版）",
     "author": "张三",
     "isbn": "9787111547426",
     "count": 15,
@@ -100,6 +151,19 @@ curl -X PUT http://localhost:8080/admin/books/update \
     "content": "第一章：Go语言简介\nGo语言是Google开发的一种静态强类型、编译型语言...\n\n第二章：高级特性\n接口、反射、内存管理等高级特性的详细讲解..."
   }'
 
+curl -X PUT http://localhost:8080/admin/books/update \
+  -H "Content-Type: application/json" \
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
+  -d '{
+    "id": 3,
+    "title": "算法导论2",
+    "author": "Thomas H. Cormen",
+    "isbn": "9787111407010",
+    "count": 3,
+    "summary": "全球众多院校广泛使用的算法教材，内容全面，涵盖排序、图算法、动态规划、贪心算法等，理论与实践结合。",
+    "content": "第4章：分治法\n介绍了递归思想与主定理（Master Theorem），并以归并排序为例说明分治策略。\n\n第15章：动态规划\n讲解了最优子结构与重叠子问题，通过钢条切割、最长公共子序列等实例深入剖析。\n\n第22章：基本的图算法\n包括广度优先搜索（BFS）、深度优先搜索（DFS）及其应用。"
+  }'
+
 # 14. 删除书籍
 curl -X DELETE "http://localhost:8080/admin/books/delete?ids=1&ids=2" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \

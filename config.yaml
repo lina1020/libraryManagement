@@ -1,5 +1,5 @@
 server:
-  port: "8080"
+  port: ":8080"
 
 db:
   user: "root"
@@ -10,6 +10,6 @@ db:
 
 elasticsearch:
   host: "127.0.0.1"
-  port: "9200"
+  port: 9200
   username:
   password:

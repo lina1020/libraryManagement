@@ -5,6 +5,7 @@ CREATE TABLE users (
                        role ENUM('user', 'admin') NOT NULL DEFAULT 'user' COMMENT '用户角色',
                        created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
                        updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+                       deleted_at DATETIME(3) NULL DEFAULT NULL,
 
                        INDEX idx_username (username),
                        INDEX idx_role (role)

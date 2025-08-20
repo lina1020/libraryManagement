@@ -21,6 +21,7 @@ type Book struct {
 type ESBookDocument struct {
 	ID      uint   `json:"id"`
 	Title   string `json:"title"`
+	Count   uint   `json:"count"`
 	Author  string `json:"author"`
 	ISBN    string `json:"isbn"`
 	Content string `json:"content"`

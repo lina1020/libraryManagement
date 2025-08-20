@@ -136,6 +136,7 @@ func (d *dbService) BookListDAO(req *api.BookSearchReq) (*api.BookSearchResp, er
 			ID:      book.ID,
 			Title:   book.Title,
 			Author:  book.Author,
+			Count:   book.Count,
 			ISBN:    book.ISBN,
 			Summary: book.Summary, // 假设 model.Book 有 Summary 字段
 		})

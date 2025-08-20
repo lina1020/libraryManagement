@@ -29,7 +29,7 @@ func register(router *gin.Engine, bookHandler *handler.BookHandler, userHandler 
 	api := router.Group("/api")
 	api.Use(middleware.AuthMiddleware("")) // 所有登录用户可访问
 	{
-		api.GET("/books/list", bookHandler.BookList)
+		api.POST("/books/list", bookHandler.BookList)
 
 		api.GET("/books/:id", bookHandler.GetBook) // 获取单本书籍详情
 

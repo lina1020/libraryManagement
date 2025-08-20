@@ -9,18 +9,25 @@ import (
 )
 
 type userDAO interface {
-	CreateUserDAO(user *api.RegisterReq) error
+	CreateUserDAO(req *api.RegisterReq) error
 	GetUserByUsernameDAO(username string) (*model.User, error)
 	GetUserByIdDAO(id uint) (*model.User, error)
 }
 
 // CreateUserDAO 创建用户（自动哈希密码）
-func (d *dbService) CreateUserDAO(user *api.RegisterReq) error {
-	hashed, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+func (d *dbService) CreateUserDAO(req *api.RegisterReq) error {
+	hashed, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
-	user.Password = string(hashed)
+	req.Password = string(hashed)
+
+	user := &model.User{
+		Username:     req.Username,
+		PasswordHash: string(hashed),
+		Role:         req.Role,
+	}
+
 	return d.db.Create(user).Error
 }
 

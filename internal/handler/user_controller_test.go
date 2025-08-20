@@ -1,179 +1,91 @@
 package handler
 
-//
-//import (
-//	"LibraryManagement/internal/api/dto"
-//	"LibraryManagement/service"
-//	"bytes"
-//	"encoding/json"
-//	"net/http"
-//	"net/http/httptest"
-//	"testing"
-//
-//	"github.com/gin-gonic/gin"
-//	"github.com/stretchr/testify/assert"
-//	"github.com/stretchr/testify/mock"
-//	"gorm.io/gorm"
-//)
-//
-//// MockUserService 模拟服务层
-//type MockUserService struct {
-//	mock.Mock
-//}
-//
-//func (m *MockUserService) Login(loginDTO *dto.LoginDTO) {
-//	m.Called(loginDTO)
-//}
-//
-//func (m *MockUserService) CreateUser(registerDTO *dto.RegisterDTO) {
-//	m.Called(registerDTO)
-//}
-//
-//// 用于替换 service.NewUserService
-//var originalNewUserService = service.NewUserService
-//
-//func setupTest() (*httptest.ResponseRecorder, *gin.Context) {
-//	gin.SetMode(gin.TestMode)
-//	w := httptest.NewRecorder()
-//	c, _ := gin.CreateTestContext(w)
-//	return w, c
-//}
-//
-//// TestLoginController_ValidJSON 测试登录成功
-//func TestLoginController_ValidJSON(t *testing.T) {
-//	w, c := setupTest()
-//
-//	// 构造请求体
-//	loginDTO := &dto.LoginDTO{
-//		Username: "alice",
-//		Password: "123456",
-//	}
-//	body, _ := json.Marshal(loginDTO)
-//
-//	// 创建请求
-//	req, _ := http.NewRequest("POST", "/login", bytes.NewBuffer(body))
-//	req.Header.Set("Content-Type", "application/json")
-//	c.Request = req
-//
-//	// 模拟 UserService
-//	mockSvc := new(MockUserService)
-//	mockSvc.On("Login", loginDTO).Return()
-//
-//	// 替换 NewUserService
-//	service.NewUserService = func(c *gin.Context, db *gorm.DB) service.UserService {
-//		return mockSvc
-//	}
-//	defer func() {
-//		service.NewUserService = originalNewUserService
-//	}()
-//
-//	// 调用控制器
-//	Login(c)
-//
-//	// 验证
-//	assert.Equal(t, http.StatusOK, w.Code)
-//	mockSvc.AssertExpectations(t)
-//
-//	// 可选：验证响应体（假设 Login 返回 Success）
-//	// 如果 Login 返回的是 { "code": 0, "message": "成功", ... }
-//	// 你可以进一步解析 w.Body.Bytes()
-//}
-//
-//// TestLoginController_InvalidJSON 测试 JSON 格式错误
-//func TestLoginController_InvalidJSON(t *testing.T) {
-//	w, c := setupTest()
-//
-//	// 无效 JSON（缺少引号）
-//	invalidJSON := []byte(`{"username": "alice", "password":}`)
-//
-//	req, _ := http.NewRequest("POST", "/login", bytes.NewBuffer(invalidJSON))
-//	req.Header.Set("Content-Type", "application/json")
-//	c.Request = req
-//
-//	// 确保 UserService 不会被调用
-//	mockSvc := new(MockUserService)
-//	mockSvc.On("Login", mock.Anything).Maybe() // 不应被调用
-//
-//	service.NewUserService = func(c *gin.Context, db *gorm.DB) service.UserService {
-//		return mockSvc
-//	}
-//	defer func() {
-//		service.NewUserService = originalNewUserService
-//	}()
-//
-//	// 调用控制器
-//	Login(c)
-//
-//	// 验证返回了 Failed 响应
-//	//  Gin 的 c.BindJSON() 在解析失败时：会自动返回 400 Bad Request，这是 Gin 的默认行为。
-//	// 即使你在 if err != nil 中调用了 result.Failed(c, ...)，但可能已经写入了响应头，或者 BindJSON 的错误优先级更高。
-//	assert.Equal(t, http.StatusBadRequest, w.Code) // 注意：Failed 也是 200
-//	assert.JSONEq(t, `{
-//		"code": 501,
-//		"message": "请求数据格式错误",
-//		"data": {}
-//	}`, w.Body.String())
-//
-//	// 验证 Login 没有被调用
-//	mockSvc.AssertNotCalled(t, "Login", mock.Anything)
-//}
-//
-//// TestRegisterController_ValidJSON
-//func TestRegisterController_ValidJSON(t *testing.T) {
-//	w, c := setupTest()
-//
-//	registerDTO := &dto.RegisterDTO{
-//		Username: "bob",
-//		Password: "123456",
-//	}
-//	body, _ := json.Marshal(registerDTO)
-//
-//	req, _ := http.NewRequest("POST", "/register", bytes.NewBuffer(body))
-//	req.Header.Set("Content-Type", "application/json")
-//	c.Request = req
-//
-//	mockSvc := new(MockUserService)
-//	mockSvc.On("CreateUser", registerDTO).Return()
-//
-//	service.NewUserService = func(c *gin.Context, db *gorm.DB) service.UserService {
-//		return mockSvc
-//	}
-//	defer func() {
-//		service.NewUserService = originalNewUserService
-//	}()
-//
-//	Register(c)
-//
-//	assert.Equal(t, http.StatusOK, w.Code)
-//	mockSvc.AssertExpectations(t)
-//}
-//
-//// TestRegisterController_InvalidJSON
-//func TestRegisterController_InvalidJSON(t *testing.T) {
-//	w, c := setupTest()
-//
-//	invalidJSON := []byte(`{"username": "bob", "password":}`)
-//
-//	req, _ := http.NewRequest("POST", "/register", bytes.NewBuffer(invalidJSON))
-//	req.Header.Set("Content-Type", "application/json")
-//	c.Request = req
-//
-//	mockSvc := new(MockUserService)
-//	service.NewUserService = func(c *gin.Context, db *gorm.DB) service.UserService {
-//		return mockSvc
-//	}
-//	defer func() {
-//		service.NewUserService = originalNewUserService
-//	}()
-//
-//	Register(c)
-//
-//	assert.Equal(t, http.StatusBadRequest, w.Code)
-//	assert.JSONEq(t, `{
-//		"code": 501,
-//		"message": "请求数据格式错误",
-//		"data": {}
-//	}`, w.Body.String())
-//
-//	mockSvc.AssertNotCalled(t, "CreateUser", mock.Anything)
-//}
+import (
+	"LibraryManagement/internal/api"
+	"LibraryManagement/internal/service"
+	"encoding/json"
+	"errors"
+	"net/http"
+	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+)
+
+// -------- Mock UserService --------
+type MockUserService struct {
+	mock.Mock
+}
+
+func (m *MockUserService) Login(req *api.LoginReq) (*api.LoginResp, error) {
+	args := m.Called(req)
+	return args.Get(0).(*api.LoginResp), args.Error(1)
+}
+func (m *MockUserService) CreateUser(req *api.RegisterReq) error {
+	args := m.Called(req)
+	return args.Error(0)
+}
+
+// -------- Tests --------
+func TestLogin(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	mockService := new(MockUserService)
+	handler := NewUserHandler(mockService)
+
+	r := gin.Default()
+	r.POST("/login", handler.Login)
+
+	// 成功
+	loginReq := api.LoginReq{Username: "alice", Password: "123456"}
+	loginResp := &api.LoginResp{Token: "token123"}
+	mockService.On("Login", &loginReq).Return(loginResp, nil).Once()
+
+	body, _ := json.Marshal(loginReq)
+	w := performRequest(r, http.MethodPost, "/login", body)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Contains(t, w.Body.String(), "token123")
+
+	// 失败：用户名或密码错误
+	mockService.On("Login", &loginReq).Return(&api.LoginResp{}, service.ErrInvalidCredentials).Once()
+	body2, _ := json.Marshal(loginReq)
+	w2 := performRequest(r, http.MethodPost, "/login", body2)
+	assert.Contains(t, w2.Body.String(), "用户名或密码错误")
+
+	// 失败：系统错误
+	mockService.On("Login", &loginReq).Return(&api.LoginResp{}, errors.New("db down")).Once()
+	body3, _ := json.Marshal(loginReq)
+	w3 := performRequest(r, http.MethodPost, "/login", body3)
+	assert.Contains(t, w3.Body.String(), "系统错误")
+}
+
+func TestRegister(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	mockService := new(MockUserService)
+	handler := NewUserHandler(mockService)
+
+	r := gin.Default()
+	r.POST("/register", handler.Register)
+
+	// 成功：新用户
+	registerReq := api.RegisterReq{Username: "bob", Password: "123456", Role: "user"}
+	mockService.On("CreateUser", &registerReq).Return(nil).Once()
+
+	body, _ := json.Marshal(registerReq)
+	w := performRequest(r, http.MethodPost, "/register", body)
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Contains(t, w.Body.String(), "创建成功")
+
+	// 失败：用户已存在
+	mockService.On("CreateUser", &registerReq).Return(service.ErrUserExists).Once()
+	body2, _ := json.Marshal(registerReq)
+	w2 := performRequest(r, http.MethodPost, "/register", body2)
+	assert.Contains(t, w2.Body.String(), "用户名已存在")
+
+	// 失败：其他系统错误
+	mockService.On("CreateUser", &registerReq).Return(errors.New("insert fail")).Once()
+	body3, _ := json.Marshal(registerReq)
+	w3 := performRequest(r, http.MethodPost, "/register", body3)
+	assert.Contains(t, w3.Body.String(), "创建失败")
+}

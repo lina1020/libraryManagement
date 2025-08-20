@@ -16,8 +16,8 @@ type BookService interface {
 
 	// ES搜索功能
 	SearchBooks(req *api.BookSearchReq) (*api.BookSearchResp, error)
-	SearchByTitle(title string, exact bool) (*[]api.BookInfoResp, error)
-	SearchByContent(content string) (*[]api.BookInfoResp, error)
+	SearchByTitle(title string, exact bool) ([]api.BookInfoResp, error)
+	SearchByContent(content string) ([]api.BookInfoResp, error)
 
 	// 索引管理
 	InitializeESIndex() error
@@ -119,7 +119,7 @@ func (b *bookServiceImpl) SearchBooks(req *api.BookSearchReq) (*api.BookSearchRe
 }
 
 // SearchByTitle 标题搜索（精确或模糊）
-func (b *bookServiceImpl) SearchByTitle(title string, exact bool) (*[]api.BookInfoResp, error) {
+func (b *bookServiceImpl) SearchByTitle(title string, exact bool) ([]api.BookInfoResp, error) {
 	docs, err := b.esService.SearchByTitle(title, exact)
 	if err != nil {
 		return nil, err
@@ -130,6 +130,7 @@ func (b *bookServiceImpl) SearchByTitle(title string, exact bool) (*[]api.BookIn
 		books = append(books, api.BookInfoResp{
 			ID:      doc.ID,
 			Title:   doc.Title,
+			Count:   doc.Count,
 			ISBN:    doc.ISBN,
 			Author:  doc.Author,
 			Summary: doc.Summary,
@@ -137,11 +138,11 @@ func (b *bookServiceImpl) SearchByTitle(title string, exact bool) (*[]api.BookIn
 		})
 	}
 
-	return &books, nil
+	return books, nil
 }
 
 // SearchByContent 内容模糊搜索
-func (b *bookServiceImpl) SearchByContent(content string) (*[]api.BookInfoResp, error) {
+func (b *bookServiceImpl) SearchByContent(content string) ([]api.BookInfoResp, error) {
 	docs, err := b.esService.SearchByContent(content)
 	if err != nil {
 		return nil, err
@@ -152,13 +153,14 @@ func (b *bookServiceImpl) SearchByContent(content string) (*[]api.BookInfoResp, 
 		books = append(books, api.BookInfoResp{
 			ID:      doc.ID,
 			Title:   doc.Title,
+			Count:   doc.Count,
 			ISBN:    doc.ISBN,
 			Author:  doc.Author,
 			Summary: doc.Summary,
 		})
 	}
 
-	return &books, nil
+	return books, nil
 }
 
 // InitializeESIndex 初始化ES索引

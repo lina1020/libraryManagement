@@ -17,7 +17,9 @@ import (
 )
 
 const (
-	BooksIndex = "books"
+	BooksIndex        = "books"
+	DefaultSearchSize = 100
+	RequestTimeout    = 5 * time.Second
 )
 
 type BookESService interface {
@@ -65,6 +67,7 @@ func (s *bookESServiceImpl) CreateIndex() error {
 						"keyword": {"type": "keyword"}
 					}
 				},
+				"count": {"type": "long"},
 				"isbn": {"type": "keyword"},
 				"content": {
 					"type": "text",
@@ -145,6 +148,7 @@ func (s *bookESServiceImpl) IndexBook(book *model.Book) error {
 	doc := model.ESBookDocument{
 		ID:      book.ID,
 		Title:   book.Title,
+		Count:   book.Count,
 		Author:  book.Author,
 		ISBN:    book.ISBN,
 		Content: book.Content,
@@ -240,28 +244,9 @@ func (s *bookESServiceImpl) GetBook(id uint) (*model.ESBookDocument, error) {
 	}
 
 	source := result["_source"].(map[string]interface{})
-	doc := &model.ESBookDocument{}
+	doc := decodeESDoc(source)
 
-	if id, ok := source["id"].(float64); ok {
-		doc.ID = uint(id)
-	}
-	if title, ok := source["title"].(string); ok {
-		doc.Title = title
-	}
-	if author, ok := source["author"].(string); ok {
-		doc.Author = author
-	}
-	if isbn, ok := source["isbn"].(string); ok {
-		doc.ISBN = isbn
-	}
-	if content, ok := source["content"].(string); ok {
-		doc.Content = content
-	}
-	if summary, ok := source["summary"].(string); ok {
-		doc.Summary = summary
-	}
-
-	return doc, nil
+	return &doc, nil
 }
 
 // SearchBooks 综合搜索书籍
@@ -391,6 +376,7 @@ func (s *bookESServiceImpl) SearchBooks(req *api.BookSearchReq) (*api.BookSearch
 				Source struct {
 					ID      float64 `json:"id"`
 					Title   string  `json:"title"`
+					Count   float64 `json:"count"`
 					Author  string  `json:"author"`
 					ISBN    string  `json:"isbn"`
 					Summary string  `json:"summary"`
@@ -409,6 +395,7 @@ func (s *bookESServiceImpl) SearchBooks(req *api.BookSearchReq) (*api.BookSearch
 		books = append(books, api.BookInfoResp{
 			ID:      uint(hit.Source.ID),
 			Title:   hit.Source.Title,
+			Count:   uint(hit.Source.Count),
 			Author:  hit.Source.Author,
 			ISBN:    hit.Source.ISBN,
 			Summary: hit.Source.Summary,
@@ -481,28 +468,7 @@ func (s *bookESServiceImpl) SearchByTitle(title string, exact bool) ([]model.ESB
 
 	for _, hit := range hits {
 		source := hit.(map[string]interface{})["_source"].(map[string]interface{})
-		doc := model.ESBookDocument{}
-
-		if id, ok := source["id"].(float64); ok {
-			doc.ID = uint(id)
-		}
-		if titleVal, ok := source["title"].(string); ok {
-			doc.Title = titleVal
-		}
-		if author, ok := source["author"].(string); ok {
-			doc.Author = author
-		}
-		if isbn, ok := source["isbn"].(string); ok {
-			doc.ISBN = isbn
-		}
-		if content, ok := source["content"].(string); ok {
-			doc.Content = content
-		}
-		if summary, ok := source["summary"].(string); ok {
-			doc.Summary = summary
-		}
-
-		documents = append(documents, doc)
+		documents = append(documents, decodeESDoc(source))
 	}
 
 	return documents, nil
@@ -559,26 +525,7 @@ func (s *bookESServiceImpl) SearchByContent(content string) ([]model.ESBookDocum
 
 	for _, hit := range hits {
 		source := hit.(map[string]interface{})["_source"].(map[string]interface{})
-		doc := model.ESBookDocument{}
-
-		if id, ok := source["id"].(float64); ok {
-			doc.ID = uint(id)
-		}
-		if title, ok := source["title"].(string); ok {
-			doc.Title = title
-		}
-		if author, ok := source["author"].(string); ok {
-			doc.Author = author
-		}
-		if isbn, ok := source["isbn"].(string); ok {
-			doc.ISBN = isbn
-		}
-		if contentVal, ok := source["content"].(string); ok {
-			doc.Content = contentVal
-		}
-		if summary, ok := source["summary"].(string); ok {
-			doc.Summary = summary
-		}
+		doc := decodeESDoc(source)
 
 		documents = append(documents, doc)
 	}
@@ -588,4 +535,33 @@ func (s *bookESServiceImpl) SearchByContent(content string) ([]model.ESBookDocum
 
 func NewBookESService() BookESService {
 	return &bookESServiceImpl{}
+}
+
+// ---------- 工具函数 ----------
+
+func decodeESDoc(source map[string]interface{}) model.ESBookDocument {
+	doc := model.ESBookDocument{}
+	if id, ok := source["id"].(float64); ok {
+		doc.ID = uint(id)
+	}
+	if title, ok := source["title"].(string); ok {
+		doc.Title = title
+	}
+	if author, ok := source["author"].(string); ok {
+		doc.Author = author
+	}
+	if isbn, ok := source["isbn"].(string); ok {
+		doc.ISBN = isbn
+	}
+	if content, ok := source["content"].(string); ok {
+		doc.Content = content
+	}
+	if summary, ok := source["summary"].(string); ok {
+		doc.Summary = summary
+	}
+
+	if count, ok := source["count"].(float64); ok {
+		doc.Count = uint(count)
+	}
+	return doc
 }
