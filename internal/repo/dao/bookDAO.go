@@ -38,10 +38,18 @@ func (d *dbService) BookAddDAO(req *api.BookInfoReq) (*model.Book, error) {
 }
 
 func (d *dbService) BookDeleteDAO(idStr []string) error {
+	if len(idStr) == 0 {
+		return nil // 没有 ID，无需删除
+	}
+
 	ids := make([]uint, 0, len(idStr))
 	for _, id := range idStr {
 		uid, _ := strconv.ParseUint(id, 10, 64)
 		ids = append(ids, uint(uid))
+	}
+
+	if len(ids) == 0 {
+		return nil // 所有 ID 都非法，不执行删除
 	}
 	return d.db.Delete(&model.Book{}, ids).Error
 }
