@@ -1,4 +1,4 @@
-CREATE TABLE books (
+CREATE TABLE IF NOT EXISTS books (
                                      id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                                      created_at DATETIME(3) NULL DEFAULT NULL,
                                      updated_at DATETIME(3) NULL DEFAULT NULL,

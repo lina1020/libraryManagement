@@ -1,0 +1,108 @@
+
+services:
+  # MySQL 数据库服务
+  mysql:
+    image: mysql:8.0
+    container_name: library_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 10209066
+      MYSQL_DATABASE: library
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./books.sql:/docker-entrypoint-initdb.d/01-books.sql
+      - ./users.sql:/docker-entrypoint-initdb.d/02-users.sql
+      - ./mysql.cnf:/etc/mysql/conf.d/mysql.cnf
+    networks:
+      - library-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p10209066"]
+      timeout: 20s
+      retries: 10
+      interval: 10s
+
+  # Elasticsearch 服务
+  elasticsearch:
+    build:
+      context: .                        # 构建上下文（当前目录）
+      dockerfile: Dockerfile.elasticsearch # ✅ 指向 ES 的 Dockerfile
+    container_name: elasticsearch-ik
+    restart: unless-stopped
+    environment:
+      - node.name=es01
+      - cluster.name=library-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    networks:
+      - library-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      timeout: 30s
+      retries: 5
+      interval: 10s
+      start_period: 30s
+
+  # 应用服务
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: library_app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      # 数据库配置
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: 10209066
+      DB_NAME: library
+      # Elasticsearch 配置
+      ES_HOST: elasticsearch
+      ES_PORT: 9200
+      # 应用配置
+      SERVER_PORT: ":8080"
+      GIN_MODE: release
+    volumes:
+      - ./config.yaml:/app/config.yaml
+    networks:
+      - library-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      timeout: 10s
+      retries: 3
+      interval: 30s
+      start_period: 40s
+
+
+volumes:
+  mysql_data:
+    driver: local
+  es_data:
+    driver: local
+
+networks:
+  library-network:
+    driver: bridge

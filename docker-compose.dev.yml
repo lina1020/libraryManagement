@@ -1,0 +1,154 @@
+
+# 开发环境专用的 Docker Compose 配置
+services:
+  # MySQL 数据库服务
+  mysql:
+    image: mysql:8.0
+    container_name: library_mysql_dev
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 10209066
+      MYSQL_DATABASE: library
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
+    ports:
+      - "3307:3306"  # 避免与本地MySQL冲突
+    volumes:
+      - mysql_dev_data:/var/lib/mysql
+      - ./books.sql:/docker-entrypoint-initdb.d/01-books.sql
+      - ./users.sql:/docker-entrypoint-initdb.d/02-users.sql
+      - ./mysql.cnf:/etc/mysql/conf.d/mysql.cnf
+    networks:
+      - library-dev-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p10209066"]
+      timeout: 20s
+      retries: 10
+      interval: 5s
+
+  # Elasticsearch 服务
+  elasticsearch:
+    image: elasticsearch:8.11.3
+    container_name: library_elasticsearch_ik_dev
+    restart: unless-stopped
+    environment:
+      - node.name=es01-dev
+      - cluster.name=library-dev-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m  # 开发环境使用更少内存
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9201:9200"  # 避免与本地ES冲突
+      - "9301:9300"
+    volumes:
+      - es_dev_data:/usr/share/elasticsearch/data
+    networks:
+      - library-dev-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      timeout: 30s
+      retries: 5
+      interval: 5s
+      start_period: 30s
+
+  # 应用服务 - 开发模式
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        - GO_VERSION=1.21
+    image: library-management:dev
+    container_name: library_app_dev
+    restart: unless-stopped
+    ports:
+      - "8081:8080"  # 避免与生产环境冲突
+    environment:
+      # 数据库配置
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: 10209066
+      DB_NAME: library
+      # Elasticsearch 配置
+      ES_HOST: elasticsearch
+      ES_PORT: 9200
+      # 应用配置
+      SERVER_PORT: ":8080"
+      GIN_MODE: debug  # 开发模式
+    volumes:
+      - .:/app  # 挂载源代码目录，支持热重载
+      - /app/bin  # 防止覆盖容器内的可执行文件
+    networks:
+      - library-dev-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    command: ["go", "run", "main.go"]  # 开发模式直接运行源码
+
+  # Redis 服务 (开发环境可选)
+  redis:
+    image: redis:7-alpine
+    container_name: library_redis_dev
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_dev_data:/data
+    networks:
+      - library-dev-network
+    profiles:
+      - with-redis
+
+  # phpMyAdmin (数据库管理工具)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: library_phpmyadmin_dev
+    restart: unless-stopped
+    ports:
+      - "8082:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: 10209066
+    networks:
+      - library-dev-network
+    depends_on:
+      - mysql
+    profiles:
+      - with-admin
+
+  # Elasticsearch Head (ES管理工具)
+  elasticsearch-head:
+    image: mobz/elasticsearch-head:5
+    container_name: library_es_head_dev
+    restart: unless-stopped
+    ports:
+      - "9100:9100"
+    networks:
+      - library-dev-network
+    depends_on:
+      - elasticsearch
+    profiles:
+      - with-admin
+
+volumes:
+  mysql_dev_data:
+    driver: local
+  es_dev_data:
+    driver: local
+  redis_dev_data:
+    driver: local
+
+networks:
+  library-dev-network:
+    driver: bridge

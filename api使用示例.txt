@@ -17,7 +17,7 @@ curl -X POST http://localhost:8080/auth/login \
     "password": "123456"
   }'
 
-{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo",
+{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTYyODI0MzEsIm5iZiI6MTc1NjE5NjAzMSwiaWF0IjoxNzU2MTk2MDMxfQ.mgCVkB_HN324DGiz_XC_VgkSajx8xMbVYH18fKZlPNM",
 "user_id":1,
 "role":"admin"}}
 # 假设获得的token为: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
@@ -25,7 +25,7 @@ curl -X POST http://localhost:8080/auth/login \
 # 3. 添加书籍（包含内容）
 curl -X POST http://localhost:8080/admin/books/add \
   -H "Content-Type: application/json" \
-  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTYyODI0MzEsIm5iZiI6MTc1NjE5NjAzMSwiaWF0IjoxNzU2MTk2MDMxfQ.mgCVkB_HN324DGiz_XC_VgkSajx8xMbVYH18fKZlPNM" \
   -d '{
     "title": "Go语言编程",
     "author": "张三",
@@ -37,7 +37,7 @@ curl -X POST http://localhost:8080/admin/books/add \
 
 curl -X POST http://localhost:8080/admin/books/add \
 -H "Content-Type: application/json" \
--H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
+-H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTYyODI0MzEsIm5iZiI6MTc1NjE5NjAzMSwiaWF0IjoxNzU2MTk2MDMxfQ.mgCVkB_HN324DGiz_XC_VgkSajx8xMbVYH18fKZlPNM" \
 -d '{
   "title": "深入理解计算机系统",
   "author": "Randal E. Bryant",
@@ -49,7 +49,7 @@ curl -X POST http://localhost:8080/admin/books/add \
 
 curl -X POST http://localhost:8080/admin/books/add \
 -H "Content-Type: application/json" \
--H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
+-H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTYyODI0MzEsIm5iZiI6MTc1NjE5NjAzMSwiaWF0IjoxNzU2MTk2MDMxfQ.mgCVkB_HN324DGiz_XC_VgkSajx8xMbVYH18fKZlPNM" \
 -d '{
 "title": "算法导论",
 "author": "Thomas H. Cormen",
@@ -61,7 +61,7 @@ curl -X POST http://localhost:8080/admin/books/add \
 
 curl -X POST http://localhost:8080/admin/books/add \
 -H "Content-Type: application/json" \
--H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
+-H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTYyODI0MzEsIm5iZiI6MTc1NjE5NjAzMSwiaWF0IjoxNzU2MTk2MDMxfQ.mgCVkB_HN324DGiz_XC_VgkSajx8xMbVYH18fKZlPNM" \
 -d '{
   "title": "重构：改善既有代码的设计",
   "author": "Martin Fowler",
@@ -73,20 +73,20 @@ curl -X POST http://localhost:8080/admin/books/add \
 
 # 4. 初始化ES索引
 curl -X POST http://localhost:8080/admin/es/index/init \
-  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTYyODI0MzEsIm5iZiI6MTc1NjE5NjAzMSwiaWF0IjoxNzU2MTk2MDMxfQ.mgCVkB_HN324DGiz_XC_VgkSajx8xMbVYH18fKZlPNM" \
 
 # 5. 重新索引所有书籍到ES
 curl -X POST http://localhost:8080/admin/es/index/reindex \
-  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTYyODI0MzEsIm5iZiI6MTc1NjE5NjAzMSwiaWF0IjoxNzU2MTk2MDMxfQ.mgCVkB_HN324DGiz_XC_VgkSajx8xMbVYH18fKZlPNM" \
 
 # 6. 获取书籍详情
 curl -X GET http://localhost:8080/api/books/1 \
-  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTYyODI0MzEsIm5iZiI6MTc1NjE5NjAzMSwiaWF0IjoxNzU2MTk2MDMxfQ.mgCVkB_HN324DGiz_XC_VgkSajx8xMbVYH18fKZlPNM" \
 
 # 7. 数据库查询书籍列表
 curl -X POST http://localhost:8080/api/books/list \
   -H "Content-Type: application/json" \
-  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTYyODI0MzEsIm5iZiI6MTc1NjE5NjAzMSwiaWF0IjoxNzU2MTk2MDMxfQ.mgCVkB_HN324DGiz_XC_VgkSajx8xMbVYH18fKZlPNM" \
   -d '{
     "title": "Go",
     "page": 1,
@@ -95,7 +95,7 @@ curl -X POST http://localhost:8080/api/books/list \
 
 curl -X POST http://localhost:8080/api/books/list \
   -H "Content-Type: application/json" \
-  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTYyODI0MzEsIm5iZiI6MTc1NjE5NjAzMSwiaWF0IjoxNzU2MTk2MDMxfQ.mgCVkB_HN324DGiz_XC_VgkSajx8xMbVYH18fKZlPNM" \
   -d '{
     "title": "",
     "page": 1,
@@ -106,7 +106,7 @@ curl -X POST http://localhost:8080/api/books/list \
 # 或使用POST方式
 curl -X POST http://localhost:8080/api/books/search \
   -H "Content-Type: application/json" \
-  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTYyODI0MzEsIm5iZiI6MTc1NjE5NjAzMSwiaWF0IjoxNzU2MTk2MDMxfQ.mgCVkB_HN324DGiz_XC_VgkSajx8xMbVYH18fKZlPNM" \
   -d '{
     "keyword": "Go语言编程",
     "page": 1,
@@ -115,15 +115,15 @@ curl -X POST http://localhost:8080/api/books/search \
 
 # 9. 精确标题搜索
 curl -X GET "http://localhost:8080/api/books/search/title?title=Go语言编程&exact=true" \
-  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTYyODI0MzEsIm5iZiI6MTc1NjE5NjAzMSwiaWF0IjoxNzU2MTk2MDMxfQ.mgCVkB_HN324DGiz_XC_VgkSajx8xMbVYH18fKZlPNM" \
 
-# 10. 模糊标题搜索 TODO 搜索不到
+# 10. 模糊标题搜索 TODO 搜索不到 分词器的问题 "算"无法搜索
 curl -X GET "http://localhost:8080/api/books/search/title?title=算&exact=false" \
-  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTYyODI0MzEsIm5iZiI6MTc1NjE5NjAzMSwiaWF0IjoxNzU2MTk2MDMxfQ.mgCVkB_HN324DGiz_XC_VgkSajx8xMbVYH18fKZlPNM" \
 
 # 11. 内容模糊搜索
 curl -X GET "http://localhost:8080/api/books/search/content?content=语言" \
-  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTYyODI0MzEsIm5iZiI6MTc1NjE5NjAzMSwiaWF0IjoxNzU2MTk2MDMxfQ.mgCVkB_HN324DGiz_XC_VgkSajx8xMbVYH18fKZlPNM" \
 
 # 12. 复合条件搜索
 curl -X POST http://localhost:8080/api/books/search \
@@ -140,7 +140,7 @@ curl -X POST http://localhost:8080/api/books/search \
 # 13. 更新书籍
 curl -X PUT http://localhost:8080/admin/books/update \
   -H "Content-Type: application/json" \
-  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTYyODI0MzEsIm5iZiI6MTc1NjE5NjAzMSwiaWF0IjoxNzU2MTk2MDMxfQ.mgCVkB_HN324DGiz_XC_VgkSajx8xMbVYH18fKZlPNM" \
   -d '{
     "id": 1,
     "title": "Go语言编程（第三版）",
@@ -153,7 +153,7 @@ curl -X PUT http://localhost:8080/admin/books/update \
 
 curl -X PUT http://localhost:8080/admin/books/update \
   -H "Content-Type: application/json" \
-  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTYyODI0MzEsIm5iZiI6MTc1NjE5NjAzMSwiaWF0IjoxNzU2MTk2MDMxfQ.mgCVkB_HN324DGiz_XC_VgkSajx8xMbVYH18fKZlPNM" \
   -d '{
     "id": 3,
     "title": "算法导论2",
@@ -166,4 +166,4 @@ curl -X PUT http://localhost:8080/admin/books/update \
 
 # 14. 删除书籍
 curl -X DELETE "http://localhost:8080/admin/books/delete?ids=1&ids=2" \
-  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTU2ODAyODAsIm5iZiI6MTc1NTU5Mzg4MCwiaWF0IjoxNzU1NTkzODgwfQ.WJNQZ-cO55jJ6vnHxxrt-8ikTsme7Apy6AaDuV0Umjo" \
+  -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTYyODI0MzEsIm5iZiI6MTc1NjE5NjAzMSwiaWF0IjoxNzU2MTk2MDMxfQ.mgCVkB_HN324DGiz_XC_VgkSajx8xMbVYH18fKZlPNM" \

@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>config: Go Coverage Report</title>
+		<title>result: Go Coverage Report</title>
 		<style>
 			body {
 				background: black;
@@ -55,47 +55,124 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">LibraryManagement/config/config.go (0.0%)</option>
+				<option value="file0">LibraryManagement/internal/api/result/code.go (0.0%)</option>
 				
-				<option value="file1">LibraryManagement/config/db.go (0.0%)</option>
+				<option value="file1">LibraryManagement/internal/api/result/result.go (0.0%)</option>
 				
-				<option value="file2">LibraryManagement/controller/bookController.go (48.0%)</option>
+				<option value="file2">LibraryManagement/internal/config/config.go (0.0%)</option>
 				
-				<option value="file3">LibraryManagement/controller/userController.go (100.0%)</option>
+				<option value="file3">LibraryManagement/internal/es/client.go (0.0%)</option>
 				
-				<option value="file4">LibraryManagement/dao/bookDAO.go (96.2%)</option>
+				<option value="file4">LibraryManagement/internal/handler/bookHandler.go (97.2%)</option>
 				
-				<option value="file5">LibraryManagement/dao/userDAO.go (0.0%)</option>
+				<option value="file5">LibraryManagement/internal/handler/userHandler.go (78.8%)</option>
 				
-				<option value="file6">LibraryManagement/main.go (0.0%)</option>
+				<option value="file6">LibraryManagement/internal/middleware/auth.go (0.0%)</option>
 				
-				<option value="file7">LibraryManagement/middleware/auth.go (0.0%)</option>
+				<option value="file7">LibraryManagement/internal/repo/dao/bookDAO.go (86.2%)</option>
 				
-				<option value="file8">LibraryManagement/result/code.go (0.0%)</option>
+				<option value="file8">LibraryManagement/internal/repo/dao/db.go (0.0%)</option>
 				
-				<option value="file9">LibraryManagement/result/result.go (0.0%)</option>
+				<option value="file9">LibraryManagement/internal/repo/dao/userDAO.go (93.8%)</option>
 				
-				<option value="file10">LibraryManagement/router/router.go (0.0%)</option>
+				<option value="file10">LibraryManagement/internal/router/router.go (0.0%)</option>
 				
-				<option value="file11">LibraryManagement/service/bookService.go (0.0%)</option>
+				<option value="file11">LibraryManagement/internal/service/bookESService.go (0.0%)</option>
 				
-				<option value="file12">LibraryManagement/service/userService.go (78.1%)</option>
+				<option value="file12">LibraryManagement/internal/service/bookService.go (0.0%)</option>
 				
-				<option value="file13">LibraryManagement/utils/jwt.go (90.0%)</option>
+				<option value="file13">LibraryManagement/internal/service/userService.go (0.0%)</option>
+				
+				<option value="file14">LibraryManagement/internal/utils/jwt.go (90.0%)</option>
+				
+				<option value="file15">LibraryManagement/main.go (0.0%)</option>
 				
 				</select>
 			</div>
 			<div id="legend">
 				<span>not tracked</span>
 			
-				<span class="cov0">not covered</span>
-				<span class="cov8">covered</span>
+				<span class="cov0">no coverage</span>
+				<span class="cov1">low coverage</span>
+				<span class="cov2">*</span>
+				<span class="cov3">*</span>
+				<span class="cov4">*</span>
+				<span class="cov5">*</span>
+				<span class="cov6">*</span>
+				<span class="cov7">*</span>
+				<span class="cov8">*</span>
+				<span class="cov9">*</span>
+				<span class="cov10">high coverage</span>
 			
 			</div>
 		</div>
 		<div id="content">
 		
-		<pre class="file" id="file0" style="display: none">package config
+		<pre class="file" id="file0" style="display: none">package result
+
+import "net/http"
+
+// 定义状态码常量
+const (
+        SuccessCode  = http.StatusOK
+        FailedCode   = http.StatusNotImplemented
+        RequiredCode = http.StatusBadRequest
+)
+
+// 状态码与信息映射
+var codeMessages = map[int]string{
+        SuccessCode:  "成功",
+        FailedCode:   "失败",
+        RequiredCode: "缺少必要参数",
+}
+
+// GetMessage 返回状态码对应的提示信息
+func GetMessage(code int) string <span class="cov0" title="0">{
+        if msg, ok := codeMessages[code]; ok </span><span class="cov0" title="0">{
+                return msg
+        }</span>
+        <span class="cov0" title="0">return "未知状态码"</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package result
+
+import (
+        "net/http"
+
+        "github.com/gin-gonic/gin"
+)
+
+type Result struct {
+        Code    int         `json:"code"`
+        Message string      `json:"message"`
+        Data    interface{} `json:"data"`
+}
+
+func Success(c *gin.Context, data interface{}) <span class="cov0" title="0">{
+        if data == nil </span><span class="cov0" title="0">{
+                data = gin.H{}
+        }</span>
+
+        <span class="cov0" title="0">res := Result{}
+        res.Code = SuccessCode
+        res.Message = GetMessage(SuccessCode)
+        res.Data = data
+
+        c.JSON(http.StatusOK, res)</span>
+}
+
+func Failed(c *gin.Context, code int, message string) <span class="cov0" title="0">{
+        res := Result{}
+        res.Code = code
+        res.Message = message
+        res.Data = gin.H{}
+
+        c.JSON(http.StatusOK, res)
+}</span>
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package config
 
 import (
         "fmt"
@@ -105,8 +182,9 @@ import (
 )
 
 type config struct {
-        Server server `yaml:"server"`
-        Db     db     `yaml:"db"`
+        Server        server              `yaml:"server"`
+        Db            db                  `yaml:"db"`
+        Elasticsearch elasticsearchConfig `yaml:"elasticsearch"`
 }
 
 type server struct {
@@ -119,6 +197,14 @@ type db struct {
         Host     string `yaml:"host"`
         Port     string `yaml:"port"`
         Db       string `yaml:"db"`
+}
+
+// elasticsearchConfig ES配置
+type elasticsearchConfig struct {
+        Host     string `yaml:"host"`
+        Port     int    `yaml:"port"`
+        Username string `yaml:"username"`
+        Password string `yaml:"password"`
 }
 
 var Config *config
@@ -137,346 +223,363 @@ func LoadConfig(path string) error <span class="cov0" title="0">{
 }
 </pre>
 		
-		<pre class="file" id="file1" style="display: none">package config
+		<pre class="file" id="file3" style="display: none">package es
 
 import (
+        "LibraryManagement/internal/config"
         "fmt"
         "log"
 
-        "gorm.io/driver/mysql"
-        "gorm.io/gorm"
+        "github.com/elastic/go-elasticsearch/v8"
 )
 
-var DB *gorm.DB
+var Client *elasticsearch.Client
 
-func SetupDBLink() error <span class="cov0" title="0">{
-        dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&amp;parseTime=True&amp;loc=Local",
-                Config.Db.User,
-                Config.Db.Password,
-                Config.Db.Host,
-                Config.Db.Port,
-                Config.Db.Db,
-        )
-        fmt.Println("DSN:", dsn)
-
-        var err error
-        DB, err = gorm.Open(mysql.Open(dsn), &amp;gorm.Config{})
-        if err != nil </span><span class="cov0" title="0">{
-                return fmt.Errorf("failed to connect database: %w", err)
+func InitES() error <span class="cov0" title="0">{
+        if config.Config.Elasticsearch.Host == "" </span><span class="cov0" title="0">{
+                log.Println("Elasticsearch配置为空，跳过ES客户端初始化")
+                return nil
         }</span>
 
-        // 获取底层 *sql.DB
-        <span class="cov0" title="0">sqlDB, err := DB.DB()
+        <span class="cov0" title="0">cfg := elasticsearch.Config{
+                Addresses: []string{
+                        fmt.Sprintf("http://%s:%d", config.Config.Elasticsearch.Host, config.Config.Elasticsearch.Port),
+                },
+        }
+
+        if config.Config.Elasticsearch.Username != "" </span><span class="cov0" title="0">{
+                cfg.Username = config.Config.Elasticsearch.Username
+                cfg.Password = config.Config.Elasticsearch.Password
+        }</span>
+
+        <span class="cov0" title="0">var err error
+        Client, err = elasticsearch.NewClient(cfg)
         if err != nil </span><span class="cov0" title="0">{
-                return fmt.Errorf("failed to get sql.DB: %w", err)
+                return fmt.Errorf("failed to create ES client: %w", err)
         }</span>
 
         // 测试连接
-        <span class="cov0" title="0">if err := sqlDB.Ping(); err != nil </span><span class="cov0" title="0">{
-                return fmt.Errorf("failed to ping database: %w", err)
+        <span class="cov0" title="0">res, err := Client.Info()
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to get ES info: %w", err)
         }</span>
+        <span class="cov0" title="0">defer res.Body.Close()
 
-        <span class="cov0" title="0">log.Println("Successfully connected to database")
+        log.Println("Successfully connected to Elasticsearch")
         return nil</span>
 }
 </pre>
 		
-		<pre class="file" id="file2" style="display: none">package controller
+		<pre class="file" id="file4" style="display: none">package handler
 
 import (
-        "LibraryManagement/config"
-        "LibraryManagement/dto"
-        "LibraryManagement/result"
-        "LibraryManagement/service"
+        "LibraryManagement/internal/api"
+        "LibraryManagement/internal/api/result"
+        "LibraryManagement/internal/service"
         "fmt"
+        "strconv"
 
         "github.com/gin-gonic/gin"
+        "github.com/go-playground/validator/v10"
 )
 
-// AddBookController 添加书籍
-func AddBookController(c *gin.Context) <span class="cov8" title="1">{
-        bookInfoDTO := &amp;dto.BookInfoReq{}
-        err := c.BindJSON(bookInfoDTO)
-        if err != nil </span><span class="cov0" title="0">{
-                return
-        }</span>
-        <span class="cov8" title="1">fmt.Println("收到请求---bookAdd: ", bookInfoDTO)
-        service.NewBookService(c, config.DB).Add(bookInfoDTO)</span>
+type BookHandler struct {
+        bookService service.BookService
 }
 
-// DeleteBookController 删除书籍
-func DeleteBookController(c *gin.Context) <span class="cov8" title="1">{
-        var ids = make([]string, 0)
-        ids = c.QueryArray("ids")
-        fmt.Println("收到请求---Delete: ", ids)
+func NewBookHandler(bookService service.BookService) *BookHandler <span class="cov10" title="10">{
+        return &amp;BookHandler{bookService: bookService}
+}</span>
 
-        if len(ids) == 0 </span><span class="cov8" title="1">{
+// AddBook 添加书籍
+func (b *BookHandler) AddBook(c *gin.Context) <span class="cov6" title="4">{
+        bookInfoReq := &amp;api.BookInfoReq{}
+        err := c.BindJSON(bookInfoReq)
+        if err != nil </span><span class="cov1" title="1">{
                 result.Failed(c, result.RequiredCode, result.GetMessage(result.RequiredCode))
                 return
         }</span>
 
-        <span class="cov8" title="1">service.NewBookService(c, config.DB).Delete(ids)</span>
+        <span class="cov5" title="3">fmt.Println("收到请求---bookAdd: ", bookInfoReq)
+
+        // 验证器会根据结构体里写的 validate 标签，自动检查字段是否符合规则
+        err = validator.New().Struct(bookInfoReq)
+        if err != nil </span><span class="cov1" title="1">{
+                result.Failed(c, result.RequiredCode, result.GetMessage(result.RequiredCode))
+                return
+        }</span>
+        // TODO ISBN校验
+
+        <span class="cov3" title="2">err = b.bookService.Add(bookInfoReq)
+
+        if err != nil </span><span class="cov1" title="1">{
+                result.Failed(c, result.FailedCode, "书籍添加失败:"+err.Error())
+                return
+        }</span>
+
+        <span class="cov1" title="1">result.Success(c, "书籍添加成功")</span>
+
 }
 
-// UpdateBookController 更新书籍
-func UpdateBookController(c *gin.Context) <span class="cov0" title="0">{
-        bookUpdateDTO := &amp;dto.BookUpdateReq{}
-        err := c.BindJSON(bookUpdateDTO)
+// DeleteBook 删除书籍
+func (b *BookHandler) DeleteBook(c *gin.Context) <span class="cov5" title="3">{
+        var ids = make([]string, 0)
+        ids = c.QueryArray("ids")
+        fmt.Println("收到请求---Delete: ", ids)
+
+        if len(ids) == 0 </span><span class="cov1" title="1">{
+                result.Failed(c, result.RequiredCode, result.GetMessage(result.RequiredCode))
+                return
+        }</span>
+
+        <span class="cov3" title="2">err := b.bookService.Delete(ids)
+
+        if err != nil </span><span class="cov1" title="1">{
+                result.Failed(c, result.FailedCode, "书籍删除失败:"+err.Error())
+                return
+        }</span>
+
+        <span class="cov1" title="1">result.Success(c, "书籍删除成功")</span>
+}
+
+// UpdateBook 更新书籍
+func (b *BookHandler) UpdateBook(c *gin.Context) <span class="cov6" title="4">{
+        bookUpdateReq := &amp;api.BookUpdateReq{}
+        err := c.BindJSON(bookUpdateReq)
+        if err != nil </span><span class="cov1" title="1">{
+                return
+        }</span>
+        <span class="cov5" title="3">fmt.Println("收到请求---bookUpdateReq: ", bookUpdateReq)
+
+        // 验证器会根据结构体里写的 validate 标签，自动检查字段是否符合规则
+        err = validator.New().Struct(bookUpdateReq)
+        if err != nil </span><span class="cov1" title="1">{
+                result.Failed(c, result.RequiredCode, result.GetMessage(result.RequiredCode))
+                return
+        }</span>
+
+        <span class="cov3" title="2">err = b.bookService.Update(bookUpdateReq)
+        if err != nil </span><span class="cov1" title="1">{
+                result.Failed(c, result.FailedCode, "书籍更新失败:"+err.Error())
+                return
+        }</span>
+        <span class="cov1" title="1">result.Success(c, "书籍更新成功")</span>
+}
+
+// GetBook 获取单本书籍详情
+func (b *BookHandler) GetBook(c *gin.Context) <span class="cov5" title="3">{
+        idStr := c.Param("id")
+        id, err := strconv.ParseUint(idStr, 10, 32)
+        if err != nil </span><span class="cov1" title="1">{
+                result.Failed(c, result.RequiredCode, "ID格式错误")
+                return
+        }</span>
+
+        <span class="cov3" title="2">book, err := b.bookService.GetByID(uint(id))
+        if err != nil </span><span class="cov1" title="1">{
+                result.Failed(c, result.FailedCode, "书籍查询失败:"+err.Error())
+                return
+        }</span>
+
+        <span class="cov1" title="1">result.Success(c, book)</span>
+}
+
+// BookList 批量查询
+func (b *BookHandler) BookList(c *gin.Context) <span class="cov6" title="4">{
+        bookSearchReq := &amp;api.BookSearchReq{}
+        err := c.BindJSON(bookSearchReq)
+        if err != nil </span><span class="cov1" title="1">{
+                return
+        }</span>
+        <span class="cov5" title="3">fmt.Println("收到请求---bookSearchReq: ", bookSearchReq)
+
+        // 验证器会根据结构体里写的 validate 标签，自动检查字段是否符合规则
+        err = validator.New().Struct(bookSearchReq)
+        if err != nil </span><span class="cov0" title="0">{
+                result.Failed(c, result.RequiredCode, result.GetMessage(result.RequiredCode))
+                return
+        }</span>
+        <span class="cov5" title="3">books, err := b.bookService.List(bookSearchReq)
+        if err != nil </span><span class="cov1" title="1">{
+                result.Failed(c, result.FailedCode, "书籍查询失败:"+err.Error())
+                return
+        }</span>
+
+        <span class="cov3" title="2">result.Success(c, books)</span>
+}
+
+// SearchBooks ES综合搜索
+func (b *BookHandler) SearchBooks(c *gin.Context) <span class="cov3" title="2">{
+        bookSearchReq := &amp;api.BookSearchReq{}
+        err := c.BindJSON(bookSearchReq)
         if err != nil </span><span class="cov0" title="0">{
                 return
         }</span>
-        <span class="cov0" title="0">fmt.Println("收到请求---bookUpdateDTO: ", bookUpdateDTO)
-        service.NewBookService(c, config.DB).Update(bookUpdateDTO)</span>
-}
 
-// BookListController 批量查询
-func BookListController(c *gin.Context) <span class="cov0" title="0">{
-        bookSearchDTO := &amp;dto.BookSearchReq{}
-        err := c.BindJSON(bookSearchDTO)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov3" title="2">fmt.Println("收到请求---ES搜索: ", bookSearchReq)
+
+        books, err := b.bookService.SearchBooks(bookSearchReq)
+        if err != nil </span><span class="cov1" title="1">{
+                result.Failed(c, result.FailedCode, "搜索失败:"+err.Error())
                 return
         }</span>
-        <span class="cov0" title="0">fmt.Println("收到请求---bookSearchDTO: ", bookSearchDTO)
-        service.NewBookService(c, config.DB).List(bookSearchDTO)</span>
+
+        <span class="cov1" title="1">result.Success(c, books)</span>
 }
-</pre>
-		
-		<pre class="file" id="file3" style="display: none">package controller
 
-import (
-        "LibraryManagement/config"
-        "LibraryManagement/dto"
-        "LibraryManagement/result"
-        "LibraryManagement/service"
-        "fmt"
-
-        "github.com/gin-gonic/gin"
-)
-
-// LoginController 登入
-func LoginController(c *gin.Context) <span class="cov8" title="1">{
-        loginDTO := &amp;dto.LoginReq{}
-        err := c.BindJSON(loginDTO)
-        if err != nil </span><span class="cov8" title="1">{
-                result.Failed(c, result.FailedCode, "请求数据格式错误")
+// SearchByTitle 标题搜索
+func (b *BookHandler) SearchByTitle(c *gin.Context) <span class="cov6" title="4">{
+        title := c.Query("title")
+        if title == "" </span><span class="cov1" title="1">{
+                result.Failed(c, result.RequiredCode, "标题参数不能为空")
                 return
         }</span>
-        <span class="cov8" title="1">fmt.Println("收到请求---登入: ", loginDTO)
-        service.NewUserService(c, config.DB).Login(loginDTO)</span>
 
-}
+        <span class="cov5" title="3">exactStr := c.DefaultQuery("exact", "false")
+        exact := exactStr == "true"
 
-// RegisterController 注册
-func RegisterController(c *gin.Context) <span class="cov8" title="1">{
-        registerDTO := &amp;dto.RegisterReq{}
-        err := c.BindJSON(registerDTO)
-        if err != nil </span><span class="cov8" title="1">{
-                result.Failed(c, result.FailedCode, "请求数据格式错误")
+        fmt.Printf("收到请求---标题搜索: title=%s, exact=%v\n", title, exact)
+
+        books, err := b.bookService.SearchByTitle(title, exact)
+        if err != nil </span><span class="cov1" title="1">{
+                result.Failed(c, result.FailedCode, "标题搜索失败:"+err.Error())
                 return
         }</span>
-        <span class="cov8" title="1">fmt.Println("收到请求---注册: ", registerDTO)
-        service.NewUserService(c, config.DB).CreateUser(registerDTO)</span>
+
+        <span class="cov3" title="2">result.Success(c, books)</span>
+}
+
+// SearchByContent 内容模糊搜索
+func (b *BookHandler) SearchByContent(c *gin.Context) <span class="cov5" title="3">{
+        content := c.Query("content")
+        if content == "" </span><span class="cov1" title="1">{
+                result.Failed(c, result.RequiredCode, "内容参数不能为空")
+                return
+        }</span>
+
+        <span class="cov3" title="2">fmt.Println("收到请求---内容搜索: ", content)
+
+        books, err := b.bookService.SearchByContent(content)
+        if err != nil </span><span class="cov1" title="1">{
+                result.Failed(c, result.FailedCode, "内容搜索失败:"+err.Error())
+                return
+        }</span>
+
+        <span class="cov1" title="1">result.Success(c, books)</span>
+}
+
+// InitESIndex 初始化ES索引
+func (b *BookHandler) InitESIndex(c *gin.Context) <span class="cov3" title="2">{
+        err := b.bookService.InitializeESIndex()
+        if err != nil </span><span class="cov1" title="1">{
+                result.Failed(c, result.FailedCode, "初始化ES索引失败:"+err.Error())
+                return
+        }</span>
+
+        <span class="cov1" title="1">result.Success(c, "ES索引初始化成功")</span>
+}
+
+// ReindexBooks 重新索引所有书籍
+func (b *BookHandler) ReindexBooks(c *gin.Context) <span class="cov3" title="2">{
+        err := b.bookService.ReindexAllBooks()
+        if err != nil </span><span class="cov1" title="1">{
+                result.Failed(c, result.FailedCode, "重新索引失败:"+err.Error())
+                return
+        }</span>
+
+        <span class="cov1" title="1">result.Success(c, "重新索引完成")</span>
 }
 </pre>
 		
-		<pre class="file" id="file4" style="display: none">package dao
+		<pre class="file" id="file5" style="display: none">package handler
 
 import (
-        "LibraryManagement/dto"
-        "LibraryManagement/entity"
-        "LibraryManagement/vo"
-        "errors"
-        "strconv"
-
-        "gorm.io/gorm"
-)
-
-func BookAddDAO(db *gorm.DB, dto *dto.BookInfoReq) error <span class="cov8" title="1">{
-        book := &amp;entity.Book{
-                Title: dto.Title,
-                Count: dto.Count,
-                ISBN:  dto.ISBN,
-        }
-
-        return db.Create(book).Error
-}</span>
-
-func BookDeleteDAO(db *gorm.DB, idStr []string) error <span class="cov8" title="1">{
-        ids := make([]uint, 0, len(idStr))
-        for _, id := range idStr </span><span class="cov8" title="1">{
-                uid, _ := strconv.ParseUint(id, 10, 64)
-                ids = append(ids, uint(uid))
-        }</span>
-        <span class="cov8" title="1">return db.Delete(&amp;entity.Book{}, ids).Error</span>
-}
-
-// 数据库乐观锁更新
-func BookUpdateDAO(db *gorm.DB, dto *dto.BookUpdateReq) error <span class="cov8" title="1">{
-        var book entity.Book
-        err := db.Where("id = ?", dto.ID).First(&amp;book).Error
-        if err != nil </span><span class="cov8" title="1">{
-                return err
-        }</span>
-
-        // 准备更新字段
-        <span class="cov8" title="1">updates := map[string]interface{}{
-                "title":   dto.Title,
-                "count":   dto.Count,
-                "isbn":    dto.ISBN,
-                "version": book.Version + 1,
-        }
-
-        // 使用乐观锁更新
-        result := db.Model(&amp;entity.Book{}).
-                Where("id = ? AND version = ?", dto.ID, book.Version).
-                Updates(updates)
-
-        if result.Error != nil </span><span class="cov0" title="0">{
-                return result.Error
-        }</span>
-        <span class="cov8" title="1">if result.RowsAffected == 0 </span><span class="cov8" title="1">{
-                return errors.New("更新失败：数据已被其他用户修改，请刷新后重试")
-        }</span>
-
-        <span class="cov8" title="1">return nil</span>
-}
-
-// TODO 考虑分页
-func BookListDAO(db *gorm.DB, dto *dto.BookSearchReq) (*[]vo.BookInfoResp, error) <span class="cov8" title="1">{
-        dbSql := db.Model(&amp;entity.Book{})
-        if dto.Title != "" </span><span class="cov8" title="1">{
-                dbSql = dbSql.Where("title LIKE ?", "%"+dto.Title+"%")
-        }</span>
-        <span class="cov8" title="1">if dto.ISBN != "" </span><span class="cov8" title="1">{
-                dbSql = dbSql.Where("isbn = ?", dto.ISBN)
-        }</span>
-        <span class="cov8" title="1">var books []vo.BookInfoResp
-        dbSql.Find(&amp;books)
-        return &amp;books, dbSql.Error</span>
-}
-</pre>
-		
-		<pre class="file" id="file5" style="display: none">package dao
-
-import (
-        "LibraryManagement/dto"
-        "LibraryManagement/entity"
-        "errors"
-
-        "golang.org/x/crypto/bcrypt"
-        "gorm.io/gorm"
-)
-
-type UserDAO interface {
-        CreateUserDAO(db *gorm.DB, user *dto.RegisterReq) error
-        GetUserByUsernameDAO(db *gorm.DB, username string) (*entity.User, error)
-        GetUserByIdDAO(db *gorm.DB, id uint) (*entity.User, error)
-}
-
-type userDAOImpl struct{}
-
-// UserDao 全局实例
-var UserDao UserDAO = &amp;userDAOImpl{}
-
-// CreateUserDAO 创建用户（自动哈希密码）
-func (d *userDAOImpl) CreateUserDAO(db *gorm.DB, user *dto.RegisterReq) error <span class="cov0" title="0">{
-        hashed, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-        if err != nil </span><span class="cov0" title="0">{
-                return err
-        }</span>
-        <span class="cov0" title="0">user.Password = string(hashed)
-        return db.Create(user).Error</span>
-}
-
-// GetUserByUsernameDAO  根据用户名查找用户
-func (d *userDAOImpl) GetUserByUsernameDAO(db *gorm.DB, username string) (*entity.User, error) <span class="cov0" title="0">{
-        var user entity.User
-        err := db.Where("username = ?", username).First(&amp;user).Error
-        if err != nil </span><span class="cov0" title="0">{
-                return nil, err
-        }</span>
-        <span class="cov0" title="0">return &amp;user, nil</span>
-}
-
-// GetUserByIdDAO 根据 ID 查找用户
-func (d *userDAOImpl) GetUserByIdDAO(db *gorm.DB, id uint) (*entity.User, error) <span class="cov0" title="0">{
-        var user entity.User
-        err := db.First(&amp;user, id).Error
-        if err != nil </span><span class="cov0" title="0">{
-                return nil, errors.New("用户不存在")
-        }</span>
-        <span class="cov0" title="0">return &amp;user, nil</span>
-}
-</pre>
-		
-		<pre class="file" id="file6" style="display: none">package main
-
-import (
-        "LibraryManagement/config"
-        "LibraryManagement/router"
-        "context"
+        "LibraryManagement/internal/api"
+        "LibraryManagement/internal/api/result"
+        "LibraryManagement/internal/service"
         "errors"
         "log"
-        "net/http"
-        "os"
-        "os/signal"
-        "syscall"
-        "time"
+
+        "github.com/gin-gonic/gin"
+        "github.com/go-playground/validator/v10"
 )
 
-// 初始化配置，连接数据库
-func init() <span class="cov0" title="0">{
-        if err := config.LoadConfig("./config.yaml"); err != nil </span><span class="cov0" title="0">{
-                log.Fatal(err)
-        }</span>
-
-        <span class="cov0" title="0">err := config.SetupDBLink()
-        if err != nil </span><span class="cov0" title="0">{
-                panic(err)</span>
-        }
-
+type UserHandler struct {
+        userService service.UserService
 }
 
-// Gin 框架 Web 服务的优雅关闭（Graceful Shutdown）实现
-func main() <span class="cov0" title="0">{
-        gin := router.InitRouter()
+func NewUserHandler(userService service.UserService) *UserHandler <span class="cov6" title="2">{
+        return &amp;UserHandler{userService: userService}
+}</span>
 
-        //创建HTTP服务器
-        server := &amp;http.Server{
-                Addr:    config.Config.Server.Port,
-                Handler: gin,
+// Login 登入
+func (u *UserHandler) Login(c *gin.Context) <span class="cov10" title="3">{
+        loginReq := &amp;api.LoginReq{}
+        err := c.BindJSON(loginReq)
+        if err != nil </span><span class="cov0" title="0">{
+                result.Failed(c, result.FailedCode, "请求数据格式错误")
+                return
+        }</span>
+        <span class="cov10" title="3">log.Println("收到请求---登入: ", loginReq)
+
+        // 调用服务层
+        loginResp, err := u.userService.Login(loginReq)
+        if err != nil </span><span class="cov6" title="2">{
+                switch </span>{
+                case errors.Is(err, service.ErrInvalidCredentials):<span class="cov1" title="1">
+                        result.Failed(c, result.FailedCode, "用户名或密码错误")</span>
+                default:<span class="cov1" title="1">
+                        result.Failed(c, result.FailedCode, "系统错误")</span>
+                }
+                <span class="cov6" title="2">return</span>
         }
 
-        //启动HTTP服务器
-        go func() </span><span class="cov0" title="0">{
-                if err := server.ListenAndServe(); err != nil &amp;&amp; !errors.Is(err, http.ErrServerClosed) </span><span class="cov0" title="0">{
-                        log.Fatalf("listen: %s\n", err)
-                }</span>
-        }()
+        <span class="cov1" title="1">result.Success(c, loginResp)</span>
+}
 
-        //等待退出信号
-        <span class="cov0" title="0">quit := make(chan os.Signal)
-        signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-        &lt;-quit
-        log.Println("Shutdown Server ...")
-
-        //创建超时上下文，Shutdown可以让未处理的连接在这个时间内关闭
-        ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-        defer cancel()
-
-        //停止HTTP服务器
-        if err := server.Shutdown(ctx); err != nil </span><span class="cov0" title="0">{
-                log.Fatal("Server Shutdown:", err)
+// Register 注册
+func (u *UserHandler) Register(c *gin.Context) <span class="cov10" title="3">{
+        registerReq := &amp;api.RegisterReq{}
+        err := c.BindJSON(registerReq)
+        if err != nil </span><span class="cov0" title="0">{
+                result.Failed(c, result.FailedCode, "请求数据格式错误")
+                return
         }</span>
-        <span class="cov0" title="0">log.Println("Server exiting")</span>
+        <span class="cov10" title="3">log.Println("收到请求---注册: ", registerReq)
+
+        if registerReq.Role == "" </span><span class="cov0" title="0">{
+                registerReq.Role = "user"
+        }</span>
+
+        // 验证器会根据结构体里写的 validate 标签，自动检查字段是否符合规则
+        <span class="cov10" title="3">err = validator.New().Struct(registerReq)
+        if err != nil </span><span class="cov0" title="0">{
+                result.Failed(c, result.RequiredCode, result.GetMessage(result.RequiredCode))
+                return
+        }</span>
+
+        <span class="cov10" title="3">err = u.userService.CreateUser(registerReq)
+
+        if err != nil </span><span class="cov6" title="2">{
+                // 区分错误类型
+                switch </span>{
+                case errors.Is(err, service.ErrUserExists):<span class="cov1" title="1">
+                        result.Failed(c, result.FailedCode, "用户名已存在")</span>
+                default:<span class="cov1" title="1">
+                        result.Failed(c, result.FailedCode, registerReq.Role+"创建失败")</span>
+                }
+                <span class="cov6" title="2">return</span>
+        }
+
+        <span class="cov1" title="1">result.Success(c, registerReq.Role+"创建成功")</span>
 
 }
 </pre>
 		
-		<pre class="file" id="file7" style="display: none">package middleware
+		<pre class="file" id="file6" style="display: none">package middleware
 
 import (
-        "LibraryManagement/utils"
+        "LibraryManagement/internal/utils"
         "net/http"
 
         "github.com/gin-gonic/gin"
@@ -520,328 +623,1247 @@ func AuthMiddleware(requiredRole string) gin.HandlerFunc <span class="cov0" titl
 }
 </pre>
 		
-		<pre class="file" id="file8" style="display: none">package result
+		<pre class="file" id="file7" style="display: none">package dao
 
-import "net/http"
-
-// 定义状态码常量
-const (
-        SuccessCode  = http.StatusOK
-        FailedCode   = http.StatusNotImplemented
-        RequiredCode = http.StatusBadRequest
+import (
+        "LibraryManagement/internal/api"
+        "LibraryManagement/internal/model"
+        "errors"
+        "fmt"
+        "strconv"
 )
 
-// 状态码与信息映射
-var codeMessages = map[int]string{
-        SuccessCode:  "成功",
-        FailedCode:   "失败",
-        RequiredCode: "缺少必要参数",
+type bookDAO interface {
+        BookAddDAO(req *api.BookInfoReq) (*model.Book, error)
+        BookDeleteDAO(idStr []string) error
+        BookUpdateDAO(req *api.BookUpdateReq) (*model.Book, error)
+        BookListDAO(req *api.BookSearchReq) (*api.BookSearchResp, error)
+
+        BookGetByIDDAO(id uint) (*model.Book, error)
+        BookGetByISBNDAO(isbn string) (*model.Book, error)
 }
 
-// GetMessage 返回状态码对应的提示信息
-func GetMessage(code int) string <span class="cov0" title="0">{
-        if msg, ok := codeMessages[code]; ok </span><span class="cov0" title="0">{
-                return msg
+func (d *dbService) BookAddDAO(req *api.BookInfoReq) (*model.Book, error) <span class="cov1" title="1">{
+        book := &amp;model.Book{
+                Title: req.Title,
+                Count: req.Count,
+                ISBN:  req.ISBN,
+
+                Author:  req.Author,
+                Content: req.Content,
+                Summary: req.Summary,
+        }
+
+        err := d.db.Create(book).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
         }</span>
-        <span class="cov0" title="0">return "未知状态码"</span>
+
+        <span class="cov1" title="1">return book, nil</span>
+}
+
+func (d *dbService) BookDeleteDAO(idStr []string) error <span class="cov3" title="2">{
+        if len(idStr) == 0 </span><span class="cov1" title="1">{
+                return nil // 没有 ID，无需删除
+        }</span>
+
+        <span class="cov1" title="1">ids := make([]uint, 0, len(idStr))
+        for _, id := range idStr </span><span class="cov1" title="1">{
+                uid, _ := strconv.ParseUint(id, 10, 64)
+                ids = append(ids, uint(uid))
+        }</span>
+
+        <span class="cov1" title="1">if len(ids) == 0 </span><span class="cov0" title="0">{
+                return nil // 所有 ID 都非法，不执行删除
+        }</span>
+        <span class="cov1" title="1">return d.db.Delete(&amp;model.Book{}, ids).Error</span>
+}
+
+// 数据库乐观锁更新
+func (d *dbService) BookUpdateDAO(req *api.BookUpdateReq) (*model.Book, error) <span class="cov1" title="1">{
+        var book model.Book
+        err := d.db.Where("id = ?", req.ID).First(&amp;book).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        // 准备更新字段
+        <span class="cov1" title="1">updates := map[string]interface{}{
+                "title": req.Title,
+                "count": req.Count,
+                "isbn":  req.ISBN,
+
+                "author":  req.Author,
+                "content": req.Content,
+                "summary": req.Summary,
+
+                "version": book.Version + 1,
+        }
+
+        // 使用乐观锁更新
+        result := d.db.Model(&amp;model.Book{}).
+                Where("id = ? AND version = ?", req.ID, book.Version).
+                Updates(updates)
+
+        if result.Error != nil </span><span class="cov0" title="0">{
+                return nil, result.Error
+        }</span>
+        <span class="cov1" title="1">if result.RowsAffected == 0 </span><span class="cov0" title="0">{
+                return nil, errors.New("更新失败：数据已被其他用户修改，请刷新后重试")
+        }</span>
+
+        // 重新查询更新后的数据
+        <span class="cov1" title="1">err = d.db.Where("id = ?", req.ID).First(&amp;book).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov1" title="1">return &amp;book, nil</span>
+}
+
+// BookListDAO 支持分页的书籍列表查询
+// TODO 深分页问题
+func (d *dbService) BookListDAO(req *api.BookSearchReq) (*api.BookSearchResp, error) <span class="cov7" title="5">{
+        dbSql := d.db.Model(&amp;model.Book{})
+        if req.Title != "" </span><span class="cov1" title="1">{
+                dbSql = dbSql.Where("title LIKE ?", "%"+req.Title+"%")
+        }</span>
+        <span class="cov7" title="5">if req.ISBN != "" </span><span class="cov1" title="1">{
+                dbSql = dbSql.Where("isbn = ?", req.ISBN)
+        }</span>
+
+        <span class="cov7" title="5">if req.Author != "" </span><span class="cov1" title="1">{
+                dbSql = dbSql.Where("author LIKE ?", "%"+req.Author+"%")
+        }</span>
+        <span class="cov7" title="5">if req.Content != "" </span><span class="cov0" title="0">{
+                dbSql = dbSql.Where("content LIKE ?", "%"+req.Content+"%")
+        }</span>
+
+        // 获取总数（用于分页）
+        <span class="cov7" title="5">var total int64
+        if err := dbSql.Count(&amp;total).Error; err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to count books: %w", err)
+        }</span>
+
+        // 分页处理
+        <span class="cov7" title="5">page := req.Page
+        if page &lt;= 0 </span><span class="cov1" title="1">{
+                page = 1
+        }</span>
+        <span class="cov7" title="5">pageSize := req.PageSize
+        if pageSize &lt;= 0 </span><span class="cov1" title="1">{
+                pageSize = 10
+        }</span>
+        <span class="cov7" title="5">offset := (page - 1) * pageSize
+
+        // 4. 查询分页数据
+        var books []model.Book
+        if err := dbSql.Offset(offset).Limit(pageSize).Find(&amp;books).Error; err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to query books: %w", err)
+        }</span>
+
+        // 5. 转换为 API 响应结构
+        <span class="cov7" title="5">bookResps := make([]api.BookInfoResp, 0, len(books))
+        for _, book := range books </span><span class="cov10" title="10">{
+                bookResps = append(bookResps, api.BookInfoResp{
+                        ID:      book.ID,
+                        Title:   book.Title,
+                        Author:  book.Author,
+                        Count:   book.Count,
+                        ISBN:    book.ISBN,
+                        Summary: book.Summary, // 假设 model.Book 有 Summary 字段
+                })
+        }</span>
+
+        // 6. 计算总页数
+        <span class="cov7" title="5">totalPages := int((total + int64(pageSize) - 1) / int64(pageSize))
+
+        return &amp;api.BookSearchResp{
+                Books:      bookResps,
+                Total:      total,
+                Page:       page,
+                PageSize:   pageSize,
+                TotalPages: totalPages,
+        }, nil</span>
+}
+
+// BookGetByIDDAO 根据ID获取书籍详情
+func (d *dbService) BookGetByIDDAO(id uint) (*model.Book, error) <span class="cov3" title="2">{
+        var book model.Book
+        err := d.db.Where("id = ?", id).First(&amp;book).Error
+        if err != nil </span><span class="cov1" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov1" title="1">return &amp;book, nil</span>
+}
+
+// BookGetByISBNDAO 根据ISBN获取书籍
+func (d *dbService) BookGetByISBNDAO(isbn string) (*model.Book, error) <span class="cov3" title="2">{
+        var book model.Book
+        err := d.db.Where("isbn = ?", isbn).First(&amp;book).Error
+        if err != nil </span><span class="cov1" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov1" title="1">return &amp;book, nil</span>
 }
 </pre>
 		
-		<pre class="file" id="file9" style="display: none">package result
+		<pre class="file" id="file8" style="display: none">package dao
 
 import (
-        "net/http"
+        "LibraryManagement/internal/config"
+        "fmt"
+        "log"
 
-        "github.com/gin-gonic/gin"
+        "gorm.io/driver/mysql"
+        "gorm.io/gorm"
 )
 
-type Result struct {
-        Code    int         `json:"code"`
-        Message string      `json:"message"`
-        Data    interface{} `json:"data"`
+var (
+        ApiDao ApiDBDao
+)
+
+type dbService struct {
+        db *gorm.DB
 }
 
-func Success(c *gin.Context, data interface{}) <span class="cov0" title="0">{
-        if data == nil </span><span class="cov0" title="0">{
-                data = gin.H{}
+// GetDB returns the global db instance
+func GetDB() *gorm.DB <span class="cov0" title="0">{
+        return ApiDao.(*dbService).db
+}</span>
+
+type ApiDBDao interface {
+        bookDAO
+        userDAO
+}
+
+func SetupDBLink() error <span class="cov0" title="0">{
+        dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&amp;parseTime=True&amp;loc=Local",
+                config.Config.Db.User,
+                config.Config.Db.Password,
+                config.Config.Db.Host,
+                config.Config.Db.Port,
+                config.Config.Db.Db,
+        )
+        fmt.Println("DSN:", dsn)
+
+        var err error
+        s := &amp;dbService{}
+        s.db, err = gorm.Open(mysql.Open(dsn), &amp;gorm.Config{})
+
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to connect database: %w", err)
         }</span>
 
-        <span class="cov0" title="0">res := Result{}
-        res.Code = SuccessCode
-        res.Message = GetMessage(SuccessCode)
-        res.Data = data
+        // 获取底层 *sql.DB
+        <span class="cov0" title="0">sqlDB, err := s.db.DB()
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to get sql.DB: %w", err)
+        }</span>
 
-        c.JSON(http.StatusOK, res)</span>
+        // 测试连接
+        <span class="cov0" title="0">if err := sqlDB.Ping(); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to ping database: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">log.Println("Successfully connected to database")
+
+        ApiDao = s
+
+        return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package dao
+
+import (
+        "LibraryManagement/internal/api"
+        "LibraryManagement/internal/model"
+        "errors"
+
+        "golang.org/x/crypto/bcrypt"
+)
+
+type userDAO interface {
+        CreateUserDAO(req *api.RegisterReq) error
+        GetUserByUsernameDAO(username string) (*model.User, error)
+        GetUserByIdDAO(id uint) (*model.User, error)
 }
 
-func Failed(c *gin.Context, code int, message string) <span class="cov0" title="0">{
-        res := Result{}
-        res.Code = code
-        res.Message = message
-        res.Data = gin.H{}
+// CreateUserDAO 创建用户（自动哈希密码）
+func (d *dbService) CreateUserDAO(req *api.RegisterReq) error <span class="cov10" title="5">{
+        hashed, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov10" title="5">req.Password = string(hashed)
 
-        c.JSON(http.StatusOK, res)
-}</span>
+        user := &amp;model.User{
+                Username:     req.Username,
+                PasswordHash: string(hashed),
+                Role:         req.Role,
+        }
+
+        return d.db.Create(user).Error</span>
+}
+
+// GetUserByUsernameDAO  根据用户名查找用户
+func (d *dbService) GetUserByUsernameDAO(username string) (*model.User, error) <span class="cov4" title="2">{
+        var user model.User
+        err := d.db.Where("username = ?", username).First(&amp;user).Error
+        if err != nil </span><span class="cov1" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov1" title="1">return &amp;user, nil</span>
+}
+
+// GetUserByIdDAO 根据 ID 查找用户
+func (d *dbService) GetUserByIdDAO(id uint) (*model.User, error) <span class="cov4" title="2">{
+        var user model.User
+        err := d.db.First(&amp;user, id).Error
+        if err != nil </span><span class="cov1" title="1">{
+                return nil, errors.New("用户不存在")
+        }</span>
+        <span class="cov1" title="1">return &amp;user, nil</span>
+}
 </pre>
 		
 		<pre class="file" id="file10" style="display: none">package router
 
 import (
-        "LibraryManagement/controller"
-        "LibraryManagement/middleware"
+        "LibraryManagement/internal/handler"
+        "LibraryManagement/internal/middleware"
 
         "github.com/gin-gonic/gin"
 )
 
 // InitRouter 初始化路由
-func InitRouter() *gin.Engine <span class="cov0" title="0">{
+func InitRouter(bookHandler *handler.BookHandler, userHandler *handler.UserHandler) *gin.Engine <span class="cov0" title="0">{
         router := gin.Default()
 
-        register(router)
+        register(router, bookHandler, userHandler)
 
         return router
 }</span>
 
-func register(router *gin.Engine) <span class="cov0" title="0">{
+func register(router *gin.Engine, bookHandler *handler.BookHandler, userHandler *handler.UserHandler) <span class="cov0" title="0">{
 
         // 公共路由（无需认证）
         auth := router.Group("/auth")
         </span><span class="cov0" title="0">{
-                auth.POST("/register", controller.RegisterController)
-                auth.POST("/login", controller.LoginController)
+                auth.POST("/register", userHandler.Register)
+                auth.POST("/login", userHandler.Login)
         }</span>
 
         // 受保护路由
         <span class="cov0" title="0">api := router.Group("/api")
         api.Use(middleware.AuthMiddleware("")) // 所有登录用户可访问
         </span><span class="cov0" title="0">{
-                api.GET("/books/list", controller.BookListController)
-                // TODO 借阅归还等
+                api.POST("/books/list", bookHandler.BookList)
+
+                api.GET("/books/:id", bookHandler.GetBook) // 获取单本书籍详情
+
+                // ES搜索功能
+                api.POST("/books/search", bookHandler.SearchBooks)            // 综合搜索
+                api.GET("/books/search/title", bookHandler.SearchByTitle)     // 标题搜索
+                api.GET("/books/search/content", bookHandler.SearchByContent) // 内容搜索
         }</span>
 
         // 管理员专用路由
         <span class="cov0" title="0">admin := router.Group("/admin")
         admin.Use(middleware.AuthMiddleware("admin")) // 仅管理员
         </span><span class="cov0" title="0">{
-                admin.POST("/books/add", controller.AddBookController)
-                admin.PUT("/books/update", controller.DeleteBookController)
-                admin.DELETE("/books/delete", controller.UpdateBookController)
+                admin.POST("/books/add", bookHandler.AddBook)
+                admin.PUT("/books/update", bookHandler.UpdateBook)
+                admin.DELETE("/books/delete", bookHandler.DeleteBook)
+
+                // ES索引管理
+                admin.POST("/es/index/init", bookHandler.InitESIndex)     // 初始化ES索引
+                admin.POST("/es/index/reindex", bookHandler.ReindexBooks) // 重新索引所有数据
+
         }</span>
 
-        //book := router.Group("/books")
-        //{
-        //        book.POST("/add", controller.AddBookController)
-        //        book.DELETE("/delete", controller.DeleteBookController)
-        //        book.PUT("/update", controller.UpdateBookController)
-        //        book.GET("/list", controller.BookListController)
-        //
-        //}
 }
 </pre>
 		
 		<pre class="file" id="file11" style="display: none">package service
 
 import (
-        "LibraryManagement/dao"
-        "LibraryManagement/dto"
-        "LibraryManagement/result"
+        "LibraryManagement/internal/api"
+        "LibraryManagement/internal/es"
+        "LibraryManagement/internal/model"
+        "bytes"
+        "context"
+        "encoding/json"
+        "fmt"
+        "log"
+        "strconv"
+        "strings"
+        "time"
 
-        "github.com/gin-gonic/gin"
-        "github.com/go-playground/validator/v10"
-        "gorm.io/gorm"
+        "github.com/elastic/go-elasticsearch/v8/esapi"
 )
 
-type BookService interface {
-        Add(dto *dto.BookInfoReq)
-        Delete(ids []string)
-        Update(dto *dto.BookUpdateReq)
-        List(dto *dto.BookSearchReq)
+const (
+        BooksIndex        = "books"
+        DefaultSearchSize = 100
+        RequestTimeout    = 5 * time.Second
+)
+
+type BookESService interface {
+        // 索引管理
+        CreateIndex() error
+        DeleteIndex() error
+
+        // 文档操作
+        IndexBook(book *model.Book) error
+        UpdateBook(book *model.Book) error
+        DeleteBook(id uint) error
+        GetBook(id uint) (*model.ESBookDocument, error)
+
+        // 搜索功能
+        SearchBooks(req *api.BookSearchReq) (*api.BookSearchResp, error)
+        SearchByTitle(title string, exact bool) ([]model.ESBookDocument, error)
+        SearchByContent(content string) ([]model.ESBookDocument, error)
 }
 
-type bookServiceImpl struct {
-        Ctx *gin.Context
-        Db  *gorm.DB
-}
+type bookESServiceImpl struct{}
 
-func (b *bookServiceImpl) Add(dto *dto.BookInfoReq) <span class="cov0" title="0">{
-        // 验证器会根据结构体里写的 validate 标签，自动检查字段是否符合规则
-        err := validator.New().Struct(dto)
-        if err != nil </span><span class="cov0" title="0">{
-                result.Failed(b.Ctx, result.RequiredCode, result.GetMessage(result.RequiredCode))
-                return
-        }</span>
-        // TODO ISBN校验
-
-        <span class="cov0" title="0">err = dao.BookAddDAO(b.Db, dto)
-        if err != nil </span><span class="cov0" title="0">{
-                result.Failed(b.Ctx, result.FailedCode, "书籍添加失败:"+err.Error())
-                return
+func (s *bookESServiceImpl) CreateIndex() error <span class="cov0" title="0">{
+        if es.Client == nil </span><span class="cov0" title="0">{
+                log.Println("ES客户端未初始化，跳过索引创建")
+                return nil
         }</span>
 
-        <span class="cov0" title="0">result.Success(b.Ctx, "书籍添加成功")</span>
+        <span class="cov0" title="0">indexMapping := `{
+                "mappings": {
+                        "properties": {
+                                "id": {"type": "long"},
+                                "title": {
+                                        "type": "text",
+                                        "analyzer": "ik_max_word",
+                                        "search_analyzer": "ik_smart",
+                                        "fields": {
+                                                "keyword": {"type": "keyword"}
+                                        }
+                                },
+                                "author": {
+                                        "type": "text",
+                                        "analyzer": "ik_max_word",
+                                        "search_analyzer": "ik_smart",
+                                        "fields": {
+                                                "keyword": {"type": "keyword"}
+                                        }
+                                },
+                                "count": {"type": "long"},
+                                "isbn": {"type": "keyword"},
+                                "content": {
+                                        "type": "text",
+                                        "analyzer": "ik_max_word",
+                                        "search_analyzer": "ik_smart"
+                                },
+                                "summary": {
+                                        "type": "text",
+                                        "analyzer": "ik_max_word",
+                                        "search_analyzer": "ik_smart"
+                                }
+                        }
+                },
+                "settings": {
+                        "number_of_shards": 1,
+                        "number_of_replicas": 0
+                }
+        }`
 
-}
-
-func (b *bookServiceImpl) Delete(ids []string) <span class="cov0" title="0">{
-        err := dao.BookDeleteDAO(b.Db, ids)
-        if err != nil </span><span class="cov0" title="0">{
-                result.Failed(b.Ctx, result.FailedCode, "书籍删除失败:"+err.Error())
-                return
-        }</span>
-
-        <span class="cov0" title="0">result.Success(b.Ctx, "书籍删除成功")</span>
-
-}
-
-// 数据库乐观锁更新
-func (b *bookServiceImpl) Update(dto *dto.BookUpdateReq) <span class="cov0" title="0">{
-        // 验证器会根据结构体里写的 validate 标签，自动检查字段是否符合规则
-        err := validator.New().Struct(dto)
-        if err != nil </span><span class="cov0" title="0">{
-                result.Failed(b.Ctx, result.RequiredCode, result.GetMessage(result.RequiredCode))
-                return
-        }</span>
-
-        <span class="cov0" title="0">err = dao.BookUpdateDAO(b.Db, dto)
-        if err != nil </span><span class="cov0" title="0">{
-                result.Failed(b.Ctx, result.FailedCode, "书籍更新失败:"+err.Error())
-                return
-        }</span>
-
-        <span class="cov0" title="0">result.Success(b.Ctx, "书籍更新成功")</span>
-}
-
-func (b *bookServiceImpl) List(dto *dto.BookSearchReq) <span class="cov0" title="0">{
-        // 验证器会根据结构体里写的 validate 标签，自动检查字段是否符合规则
-        err := validator.New().Struct(dto)
-        if err != nil </span><span class="cov0" title="0">{
-                result.Failed(b.Ctx, result.RequiredCode, result.GetMessage(result.RequiredCode))
-                return
-        }</span>
-
-        <span class="cov0" title="0">books, err := dao.BookListDAO(b.Db, dto)
-        if err != nil </span><span class="cov0" title="0">{
-                result.Failed(b.Ctx, result.FailedCode, "书籍查询失败:"+err.Error())
-                return
-        }</span>
-
-        <span class="cov0" title="0">result.Success(b.Ctx, books)</span>
-}
-
-func NewBookService(ctx *gin.Context, db *gorm.DB) BookService <span class="cov0" title="0">{
-        return &amp;bookServiceImpl{
-                Ctx: ctx,
-                Db:  db,
+        req := esapi.IndicesCreateRequest{
+                Index: BooksIndex,
+                Body:  strings.NewReader(indexMapping),
         }
+
+        // req.Do(...) 需要 context 是为了“控制请求生命周期”
+        res, err := req.Do(context.Background(), es.Client)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("创建索引失败: %w", err)
+        }</span>
+        <span class="cov0" title="0">defer res.Body.Close()
+
+        if res.IsError() </span><span class="cov0" title="0">{
+                var e map[string]interface{}
+                if err := json.NewDecoder(res.Body).Decode(&amp;e); err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("解析错误响应失败: %w", err)
+                }</span>
+                // 如果索引已存在，不视为错误
+                <span class="cov0" title="0">if errorType, ok := e["error"].(map[string]interface{})["type"]; ok &amp;&amp; errorType == "resource_already_exists_exception" </span><span class="cov0" title="0">{
+                        log.Printf("索引 %s 已存在", BooksIndex)
+                        return nil
+                }</span>
+                <span class="cov0" title="0">return fmt.Errorf("创建索引失败: %v", e["error"])</span>
+        }
+
+        <span class="cov0" title="0">log.Printf("成功创建索引: %s", BooksIndex)
+        return nil</span>
+}
+
+func (s *bookESServiceImpl) DeleteIndex() error <span class="cov0" title="0">{
+        if es.Client == nil </span><span class="cov0" title="0">{
+                log.Println("ES客户端未初始化，跳过删除索引")
+                return nil
+        }</span>
+
+        <span class="cov0" title="0">req := esapi.IndicesDeleteRequest{Index: []string{BooksIndex}}
+        res, err := req.Do(context.Background(), es.Client)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov0" title="0">defer res.Body.Close()
+
+        if res.IsError() </span><span class="cov0" title="0">{
+                return fmt.Errorf("删除索引失败: %s", res.Status())
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+
+}
+
+func (s *bookESServiceImpl) IndexBook(book *model.Book) error <span class="cov0" title="0">{
+        // 1. 参数校验
+        if es.Client == nil </span><span class="cov0" title="0">{
+                log.Println("ES客户端未初始化，跳过索引操作")
+                return nil
+        }</span>
+
+        // 2. 构建文档
+        <span class="cov0" title="0">doc := model.ESBookDocument{
+                ID:      book.ID,
+                Title:   book.Title,
+                Count:   book.Count,
+                Author:  book.Author,
+                ISBN:    book.ISBN,
+                Content: book.Content,
+                Summary: book.Summary,
+        }
+
+        // 3. 序列化文档
+        data, err := json.Marshal(doc)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("序列化文档失败: %w", err)
+        }</span>
+
+        // 4. 创建请求
+        <span class="cov0" title="0">req := esapi.IndexRequest{
+                Index:      BooksIndex,
+                DocumentID: strconv.FormatUint(uint64(book.ID), 10),
+                Body:       bytes.NewReader(data),
+                // 索引完这个文档后，立即刷新（refresh）索引，让这个文档马上可以被搜索到。
+                Refresh: "true",
+        }
+
+        // 5. 执行请求
+        res, err := req.Do(context.Background(), es.Client)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("索引文档失败: %w", err)
+        }</span>
+        <span class="cov0" title="0">defer res.Body.Close()
+
+        // 6. 检查 HTTP 状态
+        if res.IsError() </span><span class="cov0" title="0">{
+                return fmt.Errorf("索引文档失败: %s", res.Status())
+        }</span>
+
+        <span class="cov0" title="0">log.Printf("成功索引书籍: %s (ID: %d)", book.Title, book.ID)
+        return nil</span>
+}
+
+func (s *bookESServiceImpl) UpdateBook(book *model.Book) error <span class="cov0" title="0">{
+        // 直接重新索引
+        return s.IndexBook(book)
 }</span>
+
+func (s *bookESServiceImpl) DeleteBook(id uint) error <span class="cov0" title="0">{
+        if es.Client == nil </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+
+        <span class="cov0" title="0">req := esapi.DeleteRequest{
+                Index:      BooksIndex,
+                DocumentID: strconv.FormatUint(uint64(id), 10),
+                Refresh:    "true",
+        }
+
+        res, err := req.Do(context.Background(), es.Client)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("删除文档失败: %w", err)
+        }</span>
+        <span class="cov0" title="0">defer res.Body.Close()
+
+        if res.IsError() &amp;&amp; res.StatusCode != 404 </span><span class="cov0" title="0">{
+                return fmt.Errorf("删除文档失败: %s", res.Status())
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (s *bookESServiceImpl) GetBook(id uint) (*model.ESBookDocument, error) <span class="cov0" title="0">{
+        if es.Client == nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("ES客户端未初始化")
+        }</span>
+
+        <span class="cov0" title="0">req := esapi.GetRequest{
+                Index:      BooksIndex,
+                DocumentID: strconv.FormatUint(uint64(id), 10),
+        }
+
+        res, err := req.Do(context.Background(), es.Client)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">defer res.Body.Close()
+
+        if res.IsError() </span><span class="cov0" title="0">{
+                if res.StatusCode == 404 </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("文档不存在")
+                }</span>
+                <span class="cov0" title="0">return nil, fmt.Errorf("获取文档失败: %s", res.Status())</span>
+        }
+
+        <span class="cov0" title="0">var result map[string]interface{}
+        if err := json.NewDecoder(res.Body).Decode(&amp;result); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">source := result["_source"].(map[string]interface{})
+        doc := decodeESDoc(source)
+
+        return &amp;doc, nil</span>
+}
+
+// SearchBooks 综合搜索书籍
+func (s *bookESServiceImpl) SearchBooks(req *api.BookSearchReq) (*api.BookSearchResp, error) <span class="cov0" title="0">{
+        if es.Client == nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("ES客户端未初始化")
+        }</span>
+
+        // 设置默认分页参数
+        <span class="cov0" title="0">page := req.Page
+        if page &lt;= 0 </span><span class="cov0" title="0">{
+                page = 1
+        }</span>
+        <span class="cov0" title="0">pageSize := req.PageSize
+        if pageSize &lt;= 0 </span><span class="cov0" title="0">{
+                pageSize = 10
+        }</span>
+        <span class="cov0" title="0">from := (page - 1) * pageSize
+
+        // 构建查询
+        var query map[string]interface{}
+
+        if req.Keyword != "" </span><span class="cov0" title="0">{
+                // 全文搜索
+                query = map[string]interface{}{
+                        "bool": map[string]interface{}{
+                                "should": []map[string]interface{}{
+                                        {
+                                                "multi_match": map[string]interface{}{
+                                                        "query":  req.Keyword,
+                                                        "fields": []string{"title^3", "author^2", "content", "summary^1.5"},
+                                                        "type":   "best_fields",
+                                                },
+                                        },
+                                },
+                                "minimum_should_match": 1,
+                        },
+                }
+        }</span> else<span class="cov0" title="0"> {
+                // 构建布尔查询
+                var must []map[string]interface{}
+
+                if req.Title != "" </span><span class="cov0" title="0">{
+                        must = append(must, map[string]interface{}{
+                                "match": map[string]interface{}{
+                                        "title": req.Title,
+                                },
+                        })
+                }</span>
+
+                <span class="cov0" title="0">if req.Author != "" </span><span class="cov0" title="0">{
+                        must = append(must, map[string]interface{}{
+                                "match": map[string]interface{}{
+                                        "author": req.Author,
+                                },
+                        })
+                }</span>
+
+                <span class="cov0" title="0">if req.ISBN != "" </span><span class="cov0" title="0">{
+                        must = append(must, map[string]interface{}{
+                                "term": map[string]interface{}{
+                                        "isbn": req.ISBN,
+                                },
+                        })
+                }</span>
+
+                <span class="cov0" title="0">if req.Content != "" </span><span class="cov0" title="0">{
+                        must = append(must, map[string]interface{}{
+                                "match": map[string]interface{}{
+                                        "content": req.Content,
+                                },
+                        })
+                }</span>
+
+                <span class="cov0" title="0">if len(must) == 0 </span><span class="cov0" title="0">{
+                        query = map[string]interface{}{"match_all": map[string]interface{}{}}
+                }</span> else<span class="cov0" title="0"> {
+                        query = map[string]interface{}{
+                                "bool": map[string]interface{}{
+                                        "must": must,
+                                },
+                        }
+                }</span>
+        }
+
+        // 构建搜索请求
+        <span class="cov0" title="0">searchBody := map[string]interface{}{
+                "query": query,
+                "from":  from,
+                "size":  pageSize,
+                "sort": []map[string]interface{}{
+                        {"_score": map[string]string{"order": "desc"}},
+                        {"id": map[string]string{"order": "desc"}},
+                },
+        }
+
+        var buf bytes.Buffer
+        if err := json.NewEncoder(&amp;buf).Encode(searchBody); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("编码搜索请求失败: %w", err)
+        }</span>
+
+        // 执行搜索（带超时）
+        <span class="cov0" title="0">ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+        defer cancel()
+
+        res, err := es.Client.Search(
+                es.Client.Search.WithContext(ctx),
+                es.Client.Search.WithIndex(BooksIndex),
+                es.Client.Search.WithBody(&amp;buf),
+        )
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("搜索失败: %w", err)
+        }</span>
+        <span class="cov0" title="0">defer res.Body.Close()
+
+        if res.IsError() </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("搜索失败: %s", res.Status())
+        }</span>
+
+        // 解析响应
+        <span class="cov0" title="0">var result struct {
+                Hits struct {
+                        Total struct {
+                                Value int64 `json:"value"`
+                        } `json:"total"`
+                        Hits []struct {
+                                Source struct {
+                                        ID      float64 `json:"id"`
+                                        Title   string  `json:"title"`
+                                        Count   float64 `json:"count"`
+                                        Author  string  `json:"author"`
+                                        ISBN    string  `json:"isbn"`
+                                        Summary string  `json:"summary"`
+                                } `json:"_source"`
+                        } `json:"hits"`
+                } `json:"hits"`
+        }
+
+        if err := json.NewDecoder(res.Body).Decode(&amp;result); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("es响应解码失败: %w", err)
+        }</span>
+
+        // 转换为响应结构
+        <span class="cov0" title="0">books := make([]api.BookInfoResp, 0, len(result.Hits.Hits))
+        for _, hit := range result.Hits.Hits </span><span class="cov0" title="0">{
+                books = append(books, api.BookInfoResp{
+                        ID:      uint(hit.Source.ID),
+                        Title:   hit.Source.Title,
+                        Count:   uint(hit.Source.Count),
+                        Author:  hit.Source.Author,
+                        ISBN:    hit.Source.ISBN,
+                        Summary: hit.Source.Summary,
+                })
+        }</span>
+
+        <span class="cov0" title="0">totalPages := int((result.Hits.Total.Value + int64(pageSize) - 1) / int64(pageSize))
+
+        return &amp;api.BookSearchResp{
+                Books:      books,
+                Total:      result.Hits.Total.Value,
+                Page:       page,
+                PageSize:   pageSize,
+                TotalPages: totalPages,
+        }, nil</span>
+}
+
+// SearchByTitle 根据标题搜索（支持精确和模糊）
+func (s *bookESServiceImpl) SearchByTitle(title string, exact bool) ([]model.ESBookDocument, error) <span class="cov0" title="0">{
+        if es.Client == nil </span><span class="cov0" title="0">{
+                return []model.ESBookDocument{}, nil
+        }</span>
+
+        <span class="cov0" title="0">var query map[string]interface{}
+        if exact </span><span class="cov0" title="0">{
+                query = map[string]interface{}{
+                        "term": map[string]interface{}{
+                                "title.keyword": title,
+                        },
+                }
+        }</span> else<span class="cov0" title="0"> {
+                query = map[string]interface{}{
+                        "match": map[string]interface{}{
+                                "title": title,
+                        },
+                }
+        }</span>
+
+        <span class="cov0" title="0">searchBody := map[string]interface{}{
+                "query": query,
+                "size":  100, // 限制返回数量
+        }
+
+        var buf bytes.Buffer
+        if err := json.NewEncoder(&amp;buf).Encode(searchBody); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">res, err := es.Client.Search(
+                es.Client.Search.WithContext(context.Background()),
+                es.Client.Search.WithIndex(BooksIndex),
+                es.Client.Search.WithBody(&amp;buf),
+        )
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">defer res.Body.Close()
+
+        if res.IsError() </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("搜索失败: %s", res.Status())
+        }</span>
+
+        <span class="cov0" title="0">var result map[string]interface{}
+        if err := json.NewDecoder(res.Body).Decode(&amp;result); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">hits := result["hits"].(map[string]interface{})["hits"].([]interface{})
+        documents := make([]model.ESBookDocument, 0, len(hits))
+
+        for _, hit := range hits </span><span class="cov0" title="0">{
+                source := hit.(map[string]interface{})["_source"].(map[string]interface{})
+                documents = append(documents, decodeESDoc(source))
+        }</span>
+
+        <span class="cov0" title="0">return documents, nil</span>
+}
+
+// SearchByContent 根据内容模糊搜索
+func (s *bookESServiceImpl) SearchByContent(content string) ([]model.ESBookDocument, error) <span class="cov0" title="0">{
+        if es.Client == nil </span><span class="cov0" title="0">{
+                return []model.ESBookDocument{}, nil
+        }</span>
+
+        <span class="cov0" title="0">query := map[string]interface{}{
+                "match": map[string]interface{}{
+                        "content": content,
+                },
+        }
+
+        searchBody := map[string]interface{}{
+                "query": query,
+                "size":  100,
+                "highlight": map[string]interface{}{
+                        "fields": map[string]interface{}{
+                                "content": map[string]interface{}{},
+                        },
+                },
+        }
+
+        var buf bytes.Buffer
+        if err := json.NewEncoder(&amp;buf).Encode(searchBody); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">res, err := es.Client.Search(
+                es.Client.Search.WithContext(context.Background()),
+                es.Client.Search.WithIndex(BooksIndex),
+                es.Client.Search.WithBody(&amp;buf),
+        )
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">defer res.Body.Close()
+
+        if res.IsError() </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("搜索失败: %s", res.Status())
+        }</span>
+
+        <span class="cov0" title="0">var result map[string]interface{}
+        if err := json.NewDecoder(res.Body).Decode(&amp;result); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">hits := result["hits"].(map[string]interface{})["hits"].([]interface{})
+        documents := make([]model.ESBookDocument, 0, len(hits))
+
+        for _, hit := range hits </span><span class="cov0" title="0">{
+                source := hit.(map[string]interface{})["_source"].(map[string]interface{})
+                doc := decodeESDoc(source)
+
+                documents = append(documents, doc)
+        }</span>
+
+        <span class="cov0" title="0">return documents, nil</span>
+}
+
+func NewBookESService() BookESService <span class="cov0" title="0">{
+        return &amp;bookESServiceImpl{}
+}</span>
+
+// ---------- 工具函数 ----------
+
+func decodeESDoc(source map[string]interface{}) model.ESBookDocument <span class="cov0" title="0">{
+        doc := model.ESBookDocument{}
+        if id, ok := source["id"].(float64); ok </span><span class="cov0" title="0">{
+                doc.ID = uint(id)
+        }</span>
+        <span class="cov0" title="0">if title, ok := source["title"].(string); ok </span><span class="cov0" title="0">{
+                doc.Title = title
+        }</span>
+        <span class="cov0" title="0">if author, ok := source["author"].(string); ok </span><span class="cov0" title="0">{
+                doc.Author = author
+        }</span>
+        <span class="cov0" title="0">if isbn, ok := source["isbn"].(string); ok </span><span class="cov0" title="0">{
+                doc.ISBN = isbn
+        }</span>
+        <span class="cov0" title="0">if content, ok := source["content"].(string); ok </span><span class="cov0" title="0">{
+                doc.Content = content
+        }</span>
+        <span class="cov0" title="0">if summary, ok := source["summary"].(string); ok </span><span class="cov0" title="0">{
+                doc.Summary = summary
+        }</span>
+
+        <span class="cov0" title="0">if count, ok := source["count"].(float64); ok </span><span class="cov0" title="0">{
+                doc.Count = uint(count)
+        }</span>
+        <span class="cov0" title="0">return doc</span>
+}
 </pre>
 		
 		<pre class="file" id="file12" style="display: none">package service
 
 import (
-        "LibraryManagement/dao"
-        "LibraryManagement/dto"
-        "LibraryManagement/entity"
-        "LibraryManagement/result"
-        "LibraryManagement/utils"
-        "LibraryManagement/vo"
+        "LibraryManagement/internal/api"
+        "LibraryManagement/internal/repo/dao"
+        "log"
+        "strconv"
+)
+
+type BookService interface {
+        Add(dto *api.BookInfoReq) error
+        Delete(ids []string) error
+        Update(dto *api.BookUpdateReq) error
+        List(dto *api.BookSearchReq) (*api.BookSearchResp, error)
+        GetByID(id uint) (*api.BookInfoResp, error)
+
+        // ES搜索功能
+        SearchBooks(req *api.BookSearchReq) (*api.BookSearchResp, error)
+        SearchByTitle(title string, exact bool) ([]api.BookInfoResp, error)
+        SearchByContent(content string) ([]api.BookInfoResp, error)
+
+        // 索引管理
+        InitializeESIndex() error
+        ReindexAllBooks() error
+}
+
+type bookServiceImpl struct {
+        esService BookESService
+}
+
+func NewBookService() BookService <span class="cov0" title="0">{
+        return &amp;bookServiceImpl{
+                esService: NewBookESService(),
+        }
+}</span>
+
+func (b *bookServiceImpl) Add(dto *api.BookInfoReq) error <span class="cov0" title="0">{
+
+        // 先保存到数据库
+        book, err := dao.ApiDao.BookAddDAO(dto)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        // 同步到ES
+        <span class="cov0" title="0">if err := b.esService.IndexBook(book); err != nil </span><span class="cov0" title="0">{
+                log.Printf("同步书籍到ES失败: %v", err)
+                // TODO 回滚数据库操作，或者记录到消息队列中重试
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+
+}
+
+func (b *bookServiceImpl) Delete(ids []string) error <span class="cov0" title="0">{
+        // 先从数据库删除
+        err := dao.ApiDao.BookDeleteDAO(ids)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        // 从ES中删除
+        <span class="cov0" title="0">for _, idStr := range ids </span><span class="cov0" title="0">{
+                if id, parseErr := strconv.ParseUint(idStr, 10, 64); parseErr == nil </span><span class="cov0" title="0">{
+                        if esErr := b.esService.DeleteBook(uint(id)); esErr != nil </span><span class="cov0" title="0">{
+                                log.Printf("从ES删除书籍失败 (ID: %d): %v", id, esErr)
+                        }</span>
+                }
+        }
+
+        <span class="cov0" title="0">return nil</span>
+
+}
+
+// 数据库乐观锁更新
+func (b *bookServiceImpl) Update(dto *api.BookUpdateReq) error <span class="cov0" title="0">{
+
+        // 先更新数据库
+        book, err := dao.ApiDao.BookUpdateDAO(dto)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        // 同步更新到ES
+        <span class="cov0" title="0">if err := b.esService.UpdateBook(book); err != nil </span><span class="cov0" title="0">{
+                log.Printf("同步更新书籍到ES失败: %v", err)
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (b *bookServiceImpl) List(dto *api.BookSearchReq) (*api.BookSearchResp, error) <span class="cov0" title="0">{
+
+        books, err := dao.ApiDao.BookListDAO(dto)
+
+        return books, err
+}</span>
+
+func (b *bookServiceImpl) GetByID(id uint) (*api.BookInfoResp, error) <span class="cov0" title="0">{
+        book, err := dao.ApiDao.BookGetByIDDAO(id)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">return &amp;api.BookInfoResp{
+                ID:      book.ID,
+                Title:   book.Title,
+                Count:   book.Count,
+                ISBN:    book.ISBN,
+                Author:  book.Author,
+                Content: book.Content,
+                Summary: book.Summary,
+        }, nil</span>
+}
+
+// SearchBooks ES综合搜索
+func (b *bookServiceImpl) SearchBooks(req *api.BookSearchReq) (*api.BookSearchResp, error) <span class="cov0" title="0">{
+        return b.esService.SearchBooks(req)
+}</span>
+
+// SearchByTitle 标题搜索（精确或模糊）
+func (b *bookServiceImpl) SearchByTitle(title string, exact bool) ([]api.BookInfoResp, error) <span class="cov0" title="0">{
+        docs, err := b.esService.SearchByTitle(title, exact)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">books := make([]api.BookInfoResp, 0, len(docs))
+        for _, doc := range docs </span><span class="cov0" title="0">{
+                books = append(books, api.BookInfoResp{
+                        ID:      doc.ID,
+                        Title:   doc.Title,
+                        Count:   doc.Count,
+                        ISBN:    doc.ISBN,
+                        Author:  doc.Author,
+                        Summary: doc.Summary,
+                        // Content在列表中通常不返回，以减少数据传输
+                })
+        }</span>
+
+        <span class="cov0" title="0">return books, nil</span>
+}
+
+// SearchByContent 内容模糊搜索
+func (b *bookServiceImpl) SearchByContent(content string) ([]api.BookInfoResp, error) <span class="cov0" title="0">{
+        docs, err := b.esService.SearchByContent(content)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">books := make([]api.BookInfoResp, 0, len(docs))
+        for _, doc := range docs </span><span class="cov0" title="0">{
+                books = append(books, api.BookInfoResp{
+                        ID:      doc.ID,
+                        Title:   doc.Title,
+                        Count:   doc.Count,
+                        ISBN:    doc.ISBN,
+                        Author:  doc.Author,
+                        Summary: doc.Summary,
+                })
+        }</span>
+
+        <span class="cov0" title="0">return books, nil</span>
+}
+
+// InitializeESIndex 初始化ES索引
+func (b *bookServiceImpl) InitializeESIndex() error <span class="cov0" title="0">{
+        return b.esService.CreateIndex()
+}</span>
+
+// ReindexAllBooks 重新索引所有书籍数据
+func (b *bookServiceImpl) ReindexAllBooks() error <span class="cov0" title="0">{
+        log.Println("开始重新索引所有书籍...")
+
+        // 删除现有索引
+        if err := b.esService.DeleteIndex(); err != nil </span><span class="cov0" title="0">{
+                log.Printf("删除现有索引失败: %v", err)
+        }</span>
+
+        // 创建新索引
+        <span class="cov0" title="0">if err := b.esService.CreateIndex(); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        // 从数据库获取所有书籍并重新索引
+        <span class="cov0" title="0">searchReq := &amp;api.BookSearchReq{
+                Page:     1,
+                PageSize: 1000, // 批量处理
+        }
+
+        page := 1
+        for </span><span class="cov0" title="0">{
+                searchReq.Page = page
+                listResp, err := dao.ApiDao.BookListDAO(searchReq)
+                if err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+
+                <span class="cov0" title="0">books := listResp.Books
+                if len(books) == 0 </span><span class="cov0" title="0">{
+                        break</span>
+                }
+
+                // 批量索引到ES
+                <span class="cov0" title="0">for _, bookResp := range books </span><span class="cov0" title="0">{
+                        // 获取完整的书籍信息
+                        book, err := dao.ApiDao.BookGetByIDDAO(bookResp.ID)
+                        if err != nil </span><span class="cov0" title="0">{
+                                log.Printf("获取书籍详情失败 (ID: %d): %v", bookResp.ID, err)
+                                continue</span>
+                        }
+
+                        <span class="cov0" title="0">if err := b.esService.IndexBook(book); err != nil </span><span class="cov0" title="0">{
+                                log.Printf("索引书籍失败 (ID: %d): %v", book.ID, err)
+                        }</span>
+                }
+
+                <span class="cov0" title="0">if len(books) &lt; searchReq.PageSize </span><span class="cov0" title="0">{
+                        break</span>
+                }
+                <span class="cov0" title="0">page++</span>
+        }
+
+        <span class="cov0" title="0">log.Println("重新索引完成")
+        return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">package service
+
+import (
+        "LibraryManagement/internal/api"
+        "LibraryManagement/internal/model"
+        "LibraryManagement/internal/repo/dao"
+        "LibraryManagement/internal/utils"
         "errors"
 
-        "github.com/gin-gonic/gin"
-        "github.com/go-playground/validator/v10"
         "golang.org/x/crypto/bcrypt"
         "gorm.io/gorm"
 )
 
+var (
+        ErrUserExists         = errors.New("user already exists")
+        ErrInvalidCredentials = errors.New("invalid username or password")
+)
+
 type UserService interface {
-        CreateUser(user *dto.RegisterReq)
-        Login(dto *dto.LoginReq)
+        CreateUser(user *api.RegisterReq) error
+        Login(dto *api.LoginReq) (*api.LoginResp, error)
 }
 
-type userServiceImpl struct {
-        Ctx *gin.Context
-        Db  *gorm.DB
-        Dao dao.UserDAO // 依赖注入
-}
+type userServiceImpl struct{}
 
-func (u userServiceImpl) CreateUser(user *dto.RegisterReq) <span class="cov8" title="1">{
-        if user.Role == "" </span><span class="cov0" title="0">{
-                user.Role = "user"
-        }</span>
+func NewUserService() UserService <span class="cov0" title="0">{
+        return &amp;userServiceImpl{}
+}</span>
 
-        // 验证器会根据结构体里写的 validate 标签，自动检查字段是否符合规则
-        <span class="cov8" title="1">err := validator.New().Struct(user)
-        if err != nil </span><span class="cov0" title="0">{
-                result.Failed(u.Ctx, result.RequiredCode, result.GetMessage(result.RequiredCode))
-                return
-        }</span>
+func (u userServiceImpl) CreateUser(user *api.RegisterReq) error <span class="cov0" title="0">{
 
-        <span class="cov8" title="1">usernameDAO, err := u.Dao.GetUserByUsernameDAO(u.Db, user.Username)
+        usernameDAO, err := dao.ApiDao.GetUserByUsernameDAO(user.Username)
 
         if err != nil &amp;&amp; !errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
                 // 真正的数据库错误
-                result.Failed(u.Ctx, result.FailedCode, "创建用户失败")
-                return
+                return err
         }</span>
 
-        <span class="cov8" title="1">if usernameDAO != nil </span><span class="cov8" title="1">{
+        <span class="cov0" title="0">if usernameDAO != nil </span><span class="cov0" title="0">{
                 // 用户已存在
-                result.Failed(u.Ctx, result.FailedCode, "用户已存在")
-                return
+                return ErrUserExists
         }</span>
 
-        <span class="cov8" title="1">err = u.Dao.CreateUserDAO(u.Db, user)
-        if err != nil </span><span class="cov8" title="1">{
-                result.Failed(u.Ctx, result.FailedCode, user.Role+"创建失败")
-                return
-        }</span>
+        <span class="cov0" title="0">err = dao.ApiDao.CreateUserDAO(user)
 
-        <span class="cov8" title="1">result.Success(u.Ctx, user.Role+"创建成功")</span>
+        return err</span>
+
 }
 
-func (u userServiceImpl) Login(dto *dto.LoginReq) <span class="cov8" title="1">{
-        user, err := u.Dao.GetUserByUsernameDAO(u.Db, dto.Username)
-        if err != nil </span><span class="cov8" title="1">{
-                result.Failed(u.Ctx, result.FailedCode, "用户名或密码错误")
-                return
+func (u userServiceImpl) Login(dto *api.LoginReq) (*api.LoginResp, error) <span class="cov0" title="0">{
+        user, err := dao.ApiDao.GetUserByUsernameDAO(dto.Username)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, ErrInvalidCredentials
         }</span>
 
         // 验证密码
-        <span class="cov8" title="1">if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(dto.Password)); err != nil </span><span class="cov8" title="1">{
-                result.Failed(u.Ctx, result.FailedCode, "用户名或密码错误")
-                return
+        <span class="cov0" title="0">if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(dto.Password)); err != nil </span><span class="cov0" title="0">{
+                return nil, ErrInvalidCredentials
         }</span>
 
         //生成 JWT Token
-        <span class="cov8" title="1">token, err := utils.GenerateToken(user.ID, user.Role)
-        if err != nil </span><span class="cov8" title="1">{
-                result.Failed(u.Ctx, result.FailedCode, "系统错误")
-                return
+        <span class="cov0" title="0">token, err := utils.GenerateToken(user.ID, user.Role)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
         }</span>
 
-        <span class="cov8" title="1">result.Success(u.Ctx, &amp;vo.LoginResp{
+        <span class="cov0" title="0">return &amp;api.LoginResp{
                 Token:  token,
                 UserID: user.ID,
                 Role:   user.Role,
-        })</span>
+        }, nil</span>
 
 }
 
 // GetUserByID 获取用户信息（用于中间件或后续接口）
-func (u userServiceImpl) GetUserByID(id uint) (*entity.User, error) <span class="cov0" title="0">{
-        return dao.UserDao.GetUserByIdDAO(u.Db, id)
-}</span>
-
-var NewUserService = func(ctx *gin.Context, db *gorm.DB) UserService <span class="cov0" title="0">{
-        return &amp;userServiceImpl{
-                Ctx: ctx,
-                Db:  db,
-                Dao: dao.UserDao,
-        }
+func (u userServiceImpl) GetUserByID(id uint) (*model.User, error) <span class="cov0" title="0">{
+        return dao.ApiDao.GetUserByIdDAO(id)
 }</span>
 </pre>
 		
-		<pre class="file" id="file13" style="display: none">package utils
+		<pre class="file" id="file14" style="display: none">package utils
 
 import (
         "errors"
@@ -859,7 +1881,7 @@ type Claims struct {
 }
 
 // GenerateToken 生成 JWT Token
-var GenerateToken = func(userID uint, role string) (string, error) <span class="cov8" title="1">{
+var GenerateToken = func(userID uint, role string) (string, error) <span class="cov1" title="1">{
         claims := &amp;Claims{
                 UserID: userID,
                 Role:   role,
@@ -875,17 +1897,109 @@ var GenerateToken = func(userID uint, role string) (string, error) <span class="
 }</span>
 
 // ParseToken 解析 JWT Token
-func ParseToken(tokenStr string) (*Claims, error) <span class="cov8" title="1">{
-        token, err := jwt.ParseWithClaims(tokenStr, &amp;Claims{}, func(token *jwt.Token) (interface{}, error) </span><span class="cov8" title="1">{
+func ParseToken(tokenStr string) (*Claims, error) <span class="cov10" title="3">{
+        token, err := jwt.ParseWithClaims(tokenStr, &amp;Claims{}, func(token *jwt.Token) (interface{}, error) </span><span class="cov10" title="3">{
                 return jwtSecret, nil
         }</span>)
-        <span class="cov8" title="1">if err != nil </span><span class="cov8" title="1">{
+        <span class="cov10" title="3">if err != nil </span><span class="cov6" title="2">{
                 return nil, err
         }</span>
-        <span class="cov8" title="1">if claims, ok := token.Claims.(*Claims); ok &amp;&amp; token.Valid </span><span class="cov8" title="1">{
+        <span class="cov1" title="1">if claims, ok := token.Claims.(*Claims); ok &amp;&amp; token.Valid </span><span class="cov1" title="1">{
                 return claims, nil
         }</span>
         <span class="cov0" title="0">return nil, errors.New("invalid token")</span>
+}
+</pre>
+		
+		<pre class="file" id="file15" style="display: none">package main
+
+import (
+        "LibraryManagement/internal/config"
+        "LibraryManagement/internal/es"
+        "LibraryManagement/internal/handler"
+        "LibraryManagement/internal/repo/dao"
+        "LibraryManagement/internal/router"
+        "LibraryManagement/internal/service"
+        "context"
+        "errors"
+        "log"
+        "net/http"
+        "os"
+        "os/signal"
+        "syscall"
+        "time"
+)
+
+// Gin 框架 Web 服务的优雅关闭（Graceful Shutdown）实现
+func main() <span class="cov0" title="0">{
+
+        // 初始化配置，连接数据库
+        if err := config.LoadConfig("./config.yaml"); err != nil </span><span class="cov0" title="0">{
+                log.Fatal("加载配置文件失败: ", err)
+        }</span>
+
+        // 初始化数据库连接
+        <span class="cov0" title="0">if err := dao.SetupDBLink(); err != nil </span><span class="cov0" title="0">{
+                log.Fatal("数据库连接失败: ", err)
+        }</span>
+
+        // ES初始化
+        <span class="cov0" title="0">if err := es.InitES(); err != nil </span><span class="cov0" title="0">{
+                log.Printf("ES 初始化失败: %v", err)
+                log.Println("将在没有ES支持的情况下继续运行")
+        }</span> else<span class="cov0" title="0"> {
+                log.Println("ES 初始化成功")
+        }</span>
+
+        // 依赖注入
+        // init service
+        <span class="cov0" title="0">bookService := service.NewBookService()
+        userService := service.NewUserService()
+
+        // 初始化ES索引（如果ES可用）
+        if es.Client != nil </span><span class="cov0" title="0">{
+                if err := bookService.InitializeESIndex(); err != nil </span><span class="cov0" title="0">{
+                        log.Printf("ES索引初始化失败: %v", err)
+                }</span> else<span class="cov0" title="0"> {
+                        log.Println("ES索引初始化成功")
+                }</span>
+        }
+
+        // init handler
+        <span class="cov0" title="0">bookHandler := handler.NewBookHandler(bookService)
+        userHandler := handler.NewUserHandler(userService)
+
+        gin := router.InitRouter(bookHandler, userHandler)
+
+        //创建HTTP服务器
+        server := &amp;http.Server{
+                Addr:    config.Config.Server.Port,
+                Handler: gin,
+        }
+
+        //启动HTTP服务器
+        go func() </span><span class="cov0" title="0">{
+                if err := server.ListenAndServe(); err != nil &amp;&amp; !errors.Is(err, http.ErrServerClosed) </span><span class="cov0" title="0">{
+                        log.Fatalf("listen: %s\n", err)
+                }</span>
+        }()
+
+        //等待退出信号
+        <span class="cov0" title="0">quit := make(chan os.Signal)
+        signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+        &lt;-quit
+        log.Println("Shutdown Server ...")
+
+        //创建超时上下文，Shutdown可以让未处理的连接在这个时间内关闭
+        ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+        defer cancel()
+
+        //停止HTTP服务器
+        if err := server.Shutdown(ctx); err != nil </span><span class="cov0" title="0">{
+                log.Fatal("Server Shutdown:", err)
+        }</span>
+        <span class="cov0" title="0">log.Println("Server exiting")</span>
+
 }
 </pre>
 		
